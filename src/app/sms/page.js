@@ -1,31 +1,104 @@
 const SMSPage = () => (
   <div className="p-8">
-    <h1 className="text-3xl font-bold text-gray-800 mb-4">SMS Management</h1>
-    <p className="text-gray-600">Send and manage your SMS campaigns here.</p>
+    <h1 className="text-3xl font-medium text-gray-800">SMS</h1>
     {/* Add more SMS content here */}
-    <div className="mt-6 bg-white p-6 rounded-lg shadow-md">
-      <h3 className="text-xl font-semibold text-gray-700 mb-4">Send New SMS</h3>
-      <div className="mb-4">
-        <label htmlFor="recipients" className="block text-gray-700 text-sm font-bold mb-2">Recipients:</label>
-        <input
-          type="text"
-          id="recipients"
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          placeholder="e.g., +1234567890, +1987654321"
-        />
+    <div className="mb-6 mt-13 sm:flex items-center justify-between">
+      <div className="flex items-center justify-between gap-4">
+        <button className="bg-blue-800 hover:bg-blue-400 text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          SMS Purchases
+        </button>
+        <button className="bg-blue-800 hover:bg-blue-400 text-white font-medium py-2 px-4 rounded focus:outline-none focus:shadow-outline">
+          Sent Messages
+        </button>
       </div>
-      <div className="mb-6">
-        <label htmlFor="message" className="block text-gray-700 text-sm font-bold mb-2">Message:</label>
-        <textarea
-          id="message"
-          rows="5"
-          className="shadow appearance-none border rounded w-full py-2 px-3 text-gray-700 leading-tight focus:outline-none focus:shadow-outline"
-          placeholder="Type your message here..."
-        ></textarea>
-      </div>
-      <button className="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline">
-        Send SMS
-      </button>
+      <input
+        type="text"
+        className="border border-gray-300 rounded-lg py-2 px-4 bg-stone-700 text-gray-200 outline-none focus:outline-blue-600 outline mt-3 w-full sm:mt-0 sm:w-auto"
+        placeholder="Search name..."
+      />
+    </div>
+
+    <div className="overflow-x-auto">
+      <table className="min-w-full divide-y divide-gray-200">
+        <thead className="bg-gray-200">
+          <tr>
+            <th className="px-5 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">
+              Name
+            </th>
+            <th className="px-5 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">
+              Amount
+            </th>
+            <th className="px-5 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">
+              SMS Unit
+            </th>
+            <th className="px-5 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">
+              SMS Balance
+            </th>
+            <th className="px-5 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">
+              Purchase Date
+            </th>
+          </tr>
+        </thead>
+        <tbody className="bg-white divide-y divide-gray-200">
+          {/* Add rows here */}
+
+          {[
+            {
+              name: "Greater Glory Ministry Int'l",
+              amount: "500",
+              smsUnit: "250",
+              smsBalance: "0",
+              purchaseDate: "08/07/2025",
+            },
+            {
+              name: "Zone 3",
+              amount: "0",
+              smsUnit: "100",
+              smsBalance: "0",
+              purchaseDate: "08/07/2025",
+            },
+            {
+              name: "Greatwalls Prophetic Ministries Inc",
+              amount: "2000",
+              smsUnit: "1000",
+              smsBalance: "0",
+              purchaseDate: "07/07/2025",
+            },
+            {
+              name: "RCCG The Faith City",
+              amount: "700",
+              smsUnit: "350",
+              smsBalance: "0",
+              purchaseDate: "07/07/2025",
+            },
+            {
+              name: "Anglican Church of the Nativity",
+              amount: "0",
+              smsUnit: "100",
+              smsBalance: "0",
+              purchaseDate: "07/07/2025",
+            },
+          ].map((sms, index) => (
+            <tr key={index} className="hover:bg-gray-100">
+              <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
+                {sms.name}
+              </td>
+              <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
+                {sms.amount}
+              </td>
+              <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
+                {sms.smsUnit}
+              </td>
+              <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
+                {sms.smsBalance}
+              </td>
+              <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
+                {sms.purchaseDate}
+              </td>
+            </tr>
+          ))}
+        </tbody>
+      </table>
     </div>
   </div>
 );
