@@ -1,6 +1,17 @@
-const TenantsPage = () => (
+import { Menu } from 'lucide-react';
+
+const TenantsPage = ({ openNavbar }) => (
+  
   <div className="p-8">
-    <h1 className="text-3xl font-medium text-gray-800 mb-4">Tenants</h1>
+    <button
+      onClick={openNavbar} // Call the function to open the navbar
+      className="lg:hidden fixed top-4 left-4 p-2 bg-blue-600 text-white rounded-full shadow-lg z-30"
+      aria-label="Open navigation"
+    >
+      <Menu className="w-6 h-6" />
+    </button>
+
+    <h1 className="text-3xl font-medium text-gray-800 mb-4 mt-10 md:mt-0">Tenants</h1>
 
     <div className="mt-6 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
       <div className="bg-gray-200 p-6 rounded-lg">

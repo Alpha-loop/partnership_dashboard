@@ -1,55 +1,49 @@
 const Expirecontent = () => {
   return (
-    <div className="border mt-6 pl-6  pt-3 w-100 pr-6 bg-gray-100 shadow-md rounded-lg">
-      <div className="px-10 flex justify-between items-center">
-        <button className="text-gray-950 text-2xl mt-2 mr-4 font-semibold leading-5 focus:underline ">
-          Expiring Accounts
-        </button>
-        <button className="text-gray-950 text-2xl mt-2 font-semibold leading-5 focus:underline">
-          Expired Accounts
-        </button>
+    <div className="border mt-6 p-6 bg-gray-100 shadow-md rounded-lg">
+      {/* Header with toggle buttons */}
+      <div className="sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
+        <div className="flex space-x-4 overflow-x-auto pb-2 w-full sm:w-auto">
+          <button className="text-gray-950 text-xl sm:text-2xl font-semibold whitespace-nowrap focus:underline hover:underline">
+            Expiring Accounts
+          </button>
+          <button className="text-gray-950 text-xl sm:text-2xl font-semibold whitespace-nowrap focus:underline hover:underline">
+            Expired Accounts
+          </button>
+        </div>
+        
+        {/* Filter dropdown */}
+        <div className="flex items-center gap-3 w-full sm:w-auto">
+          <p className="text-gray-950 whitespace-nowrap">Expiring day</p>
+          <select
+            className="border border-gray-300 rounded-md py-2 px-3 bg-white text-gray-900 font-medium focus:outline-none focus:ring-2 focus:ring-blue-500 focus:border-blue-500 w-full sm:w-auto"
+          >
+            <option value="">This Week</option>
+            <option value="">Next Week</option>
+            <option value="">This Month</option>
+            <option value="">Next Month</option>
+            <option value="">3 Months</option>
+          </select>
+        </div>
       </div>
 
-      <div className="flex justify-between items-center w-60 mt-6">
-        <p className="text-gray-950">Expiring day</p>
-        <select
-          name="This Week"
-          className="border border-gray-300 rounded-md py-2 px-2 bg-stone-700 text-gray-950 font-semibold outline-none focus:outline-blue-600 outline"
-        >
-          <option value="" className="hover:bg-blue-400">
-            This Week
-          </option>
-          <option value="" className="hover:bg-red-400">
-            Next Week
-          </option>
-          <option value="" className="hover:bg-blue-400">
-            This Month
-          </option>
-          <option value="" className="hover:bg-blue-400">
-            Next Month
-          </option>
-          <option value="" className="hover:bg-blue-400">
-            3 Months
-          </option>
-        </select>
-      </div>
-
-      <div className="overflow-x-auto overflow-y-auto h-132">
-        <table className=" divide-y divide-gray-200">
-          <thead>
+      {/* Responsive table container */}
+      <div className="overflow-x-auto rounded-lg border border-gray-200">
+        <table className="min-w-full divide-y divide-gray-200">
+          <thead className="bg-gray-50">
             <tr>
-              <th className="ppy-4 px-2 w-1/5 text-left text-sm font-semibold text-gray-600">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Name
               </th>
-              <th className="py-4 px-2 w-1/5 text-left text-sm font-semibold text-gray-600">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Plan
               </th>
-              <th className="py-4 px-2 w-1/5 text-left text-sm font-semibold text-gray-600">
+              <th className="px-4 py-3 text-left text-xs font-medium text-gray-500 uppercase tracking-wider">
                 Expiry Date
               </th>
             </tr>
           </thead>
-          <tbody className="divide-y divide-gray-200">
+          <tbody className="bg-white divide-y divide-gray-200">
             {[
               {
                 name: "DOMINION CITY JABI",
@@ -73,7 +67,7 @@ const Expirecontent = () => {
                 expiryDate: "10/07/2025",
               },
               {
-                name: "The Glory of Liberty int’l Ministry",
+                name: "The Glory of Liberty int' Ministry",
                 email: "pstfreedomodine2018@gmail.com",
                 phone: "+234 805 492 0935",
                 plan: "GROWTH PLAN",
@@ -94,21 +88,34 @@ const Expirecontent = () => {
                 expiryDate: "12/07/2025",
               },
             ].map((table, index) => (
-              <tr key={index}>
-                <td className="py-4 px-2 text-sm font-semibold text-gray-700 text-left">
-                  <div className="text-sm font-medium text-gray-900 leading-5">
-                    {table.name}
-                  </div>
-                  <div className="text-sm text-gray-500">{table.email}</div>
+              <tr key={index} className="hover:bg-gray-50">
+                <td className="px-4 py-3">
+                  <div className="text-sm font-medium text-gray-900">{table.name}</div>
+                  <div className="text-sm text-gray-500 mt-1">{table.email}</div>
                   <div className="text-sm text-gray-500">{table.phone}</div>
                 </td>
-                <td className="py-4 px-2 whitespace-nowrap text-sm font-semibold text-gray-700 text-left">
-                  <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-gray-700">
+                <td className="px-4 py-3">
+                  <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
                     {table.plan}
                   </span>
                 </td>
-                <td className="py-4 px-2 whitespace-nowrap text-sm font-semibold text-gray-700 text-left">
-                  {table.expiryDate}
+                <td className="px-4 py-3 whitespace-nowrap">
+                  <div className="text-sm font-medium text-gray-900">
+                    {table.expiryDate}
+                  </div>
+                  <div className="text-xs text-red-600 font-medium mt-1">
+                    {(() => {
+                      const expiryDate = new Date(table.expiryDate.split('/').reverse().join('-'));
+                      const today = new Date();
+                      const diffTime = expiryDate - today;
+                      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+                      
+                      if (diffDays < 0) return 'Expired';
+                      if (diffDays === 0) return 'Expires today';
+                      if (diffDays === 1) return 'Expires tomorrow';
+                      return `Expires in ${diffDays} days`;
+                    })()}
+                  </div>
                 </td>
               </tr>
             ))}

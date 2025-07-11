@@ -1,6 +1,15 @@
-const SubscriptionPage = () => (
+import { Menu } from 'lucide-react';
+
+const SubscriptionPage = ({ openNavbar }) => (
   <div className="p-8">
-    <h1 className="text-3xl font-medium text-gray-800 mb-18">Subscription</h1>
+     <button
+      onClick={openNavbar}
+      className="lg:hidden fixed top-4 left-4 p-2 bg-blue-600 text-white rounded-full shadow-lg z-50"
+      aria-label="Open navigation"
+    >
+      <Menu className="w-6 h-6" />
+    </button>
+    <h1 className="text-3xl font-medium text-gray-800 mb-18 mt-10 md:mt-0">Subscription</h1>
 
     <div className="w-full mt-12 sm:flex justify-self-end sm:w-auto">
       <input

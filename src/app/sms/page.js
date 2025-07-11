@@ -1,6 +1,15 @@
-const SMSPage = () => (
+import { Menu } from 'lucide-react';
+
+const SMSPage = ({ openNavbar }) => (
   <div className="p-8">
-    <h1 className="text-3xl font-medium text-gray-800">SMS</h1>
+    <button
+      onClick={openNavbar}
+      className="lg:hidden fixed top-4 left-4 p-2 bg-blue-600 text-white rounded-full shadow-lg z-50"
+      aria-label="Open navigation"
+    >
+      <Menu className="w-6 h-6" />
+    </button>
+    <h1 className="text-3xl font-medium text-gray-800 mt-10 md:mt-0">SMS</h1>
     {/* Add more SMS content here */}
     <div className="mb-6 mt-13 sm:flex items-center justify-between">
       <div className="flex items-center justify-between gap-4">
@@ -22,20 +31,20 @@ const SMSPage = () => (
       <table className="min-w-full divide-y divide-gray-200">
         <thead className="bg-gray-200">
           <tr>
-            <th className="px-5 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">
+            <th className="px-5 py-3 text-left text-sm font-bold uppercase tracking-wider">
               Name
             </th>
-            <th className="px-5 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">
+            <th className="px-5 py-3 text-left text-sm font-bold uppercase tracking-wider">
               Amount
             </th>
-            <th className="px-5 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">
-              SMS Unit
+            <th className="px-5 py-3 text-left text-sm font-bold uppercase tracking-wider">
+              SMS <br />Unit
             </th>
-            <th className="px-5 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">
-              SMS Balance
+            <th className="px-5 py-3 text-left text-sm font-bold uppercase tracking-wider">
+              SMS <br />Balance
             </th>
-            <th className="px-5 py-3 text-left text-sm font-bold text-gray-500 uppercase tracking-wider">
-              Purchase Date
+            <th className="px-5 py-3 text-left text-sm font-bold uppercase tracking-wider">
+              <p className="font-extrabold">Purchase <br />Date</p>
             </th>
           </tr>
         </thead>
