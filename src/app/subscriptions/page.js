@@ -1,190 +1,167 @@
+'use client'; // Important for client-side interactivity
+
+import React, { useState, useEffect } from 'react';
 import { Menu } from 'lucide-react';
 
-const SubscriptionPage = ({ openNavbar }) => (
-  <div className="p-8">
-     <button
-      onClick={openNavbar}
-      className="lg:hidden fixed top-4 left-4 p-2 bg-blue-600 text-white rounded-full shadow-lg z-50"
-      aria-label="Open navigation"
-    >
-      <Menu className="w-6 h-6" />
-    </button>
-    <h1 className="text-3xl font-medium text-gray-800 mb-18 mt-10 md:mt-0">Subscription</h1>
+// Import the API service function for recent subscriptions
+import {
+  getRecentSubscriptions,
+} from '../../services/partner'; // Adjust the path based on your file structure
 
-    <div className="w-full mt-12 sm:flex justify-self-end sm:w-auto">
-      <input
-        type="text"
-        className="border border-gray-300 rounded-lg py-2 px-4 bg-stone-700 text-gray-200 outline-none focus:outline-blue-600 outline w-full sm:w-auto"
-        placeholder="Search name..."
-      />
+const SubscriptionPage = ({ openNavbar }) => {
+  const [subscriptions, setSubscriptions] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Function to fetch subscription data
+  const fetchSubscriptionsData = async () => {
+    setLoading(true);
+    setError(null);
+    try {
+      const data = await getRecentSubscriptions();
+      // Assuming data is an array of subscription objects
+      setSubscriptions(data);
+      console.log('Recent Subscriptions Data:', data);
+    } catch (err) {
+      console.error("Failed to fetch subscription data:", err);
+      setError(err.message || 'Failed to load subscription data.');
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  // Fetch data on component mount
+  useEffect(() => {
+    fetchSubscriptionsData();
+  }, []); // Empty dependency array means this runs once on mount
+
+  // Client-side filtering for the table based on search term
+  const filteredSubscriptions = subscriptions.filter(subscription => {
+    const name = subscription.name || '';
+    const email = subscription.email || '';
+    const phone = subscription.phone || '';
+    const plan = subscription.plan || '';
+    const country = subscription.country || '';
+    const subscriptionDate = subscription.subscriptionDate || '';
+    const amount = subscription.amount ? String(subscription.amount) : ''; // Convert to string for search
+
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+    return (
+      name.toLowerCase().includes(lowerCaseSearchTerm) ||
+      email.toLowerCase().includes(lowerCaseSearchTerm) ||
+      phone.toLowerCase().includes(lowerCaseSearchTerm) ||
+      plan.toLowerCase().includes(lowerCaseSearchTerm) ||
+      country.toLowerCase().includes(lowerCaseSearchTerm) ||
+      subscriptionDate.toLowerCase().includes(lowerCaseSearchTerm) ||
+      amount.includes(lowerCaseSearchTerm)
+    );
+  });
+
+  // Helper function to format date if needed (assuming subscriptionDate is a string like "MM/DD/YYYY")
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    // You might want to parse and reformat date strings here if they come in a different format
+    // For example, if from API as ISO string: new Date(dateString).toLocaleDateString()
+    return dateString;
+  };
+
+  // Helper function to format amount with commas
+  const formatAmount = (amount) => {
+    if (amount === null || amount === undefined) return 'N/A';
+    return Number(amount).toLocaleString();
+  };
+
+  return (
+    <div className="p-8 font-sans">
+      <button
+        onClick={openNavbar}
+        className="lg:hidden fixed top-4 left-4 p-2 bg-blue-600 text-white rounded-full shadow-lg z-50"
+        aria-label="Open navigation"
+      >
+        <Menu className="w-6 h-6" />
+      </button>
+      <h1 className="text-3xl font-medium text-gray-800 mb-18 mt-10 md:mt-0">Subscription</h1>
+
+      <div className="w-full mt-12 flex justify-end"> {/* Changed justify-self-end to justify-end */}
+        <input
+          type="text"
+          className="border border-gray-300 rounded-lg py-2 px-4 bg-stone-700 text-gray-200 outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent w-full sm:w-auto"
+          placeholder="Search subscriptions..."
+          value={searchTerm}
+          onChange={(e) => setSearchTerm(e.target.value)}
+        />
+      </div>
+
+      {loading && <p className="text-blue-500 text-center mt-4">Loading subscriptions data...</p>}
+      {error && <p className="text-red-500 text-center mt-4">Error: {error}</p>}
+
+      {!loading && !error && (
+        <div className="mt-6 overflow-x-auto bg-white rounded-lg shadow-lg">
+          <table className="w-full divide-y divide-gray-200">
+            <thead className="bg-gray-200">
+              <tr>
+                <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">
+                  Name
+                </th>
+                <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">
+                  Amount
+                </th>
+                <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">
+                  Plan
+                </th>
+                <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">
+                  Country
+                </th>
+                <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">
+                  Subscription Date
+                </th>
+              </tr>
+            </thead>
+            <tbody className="bg-white divide-y divide-gray-200">
+              {filteredSubscriptions.length > 0 ? (
+                filteredSubscriptions.map((subscription, index) => (
+                  // Use a unique identifier from your backend if available (e.g., subscription.id)
+                  // Falling back to index if no unique ID is guaranteed, but ID is preferred.
+                  <tr key={subscription.id || index} className="hover:bg-gray-100">
+                    <td className="px-5 py-4 text-sm text-gray-700">
+                      <div className="text-sm font-medium text-gray-900">
+                        {subscription.name || 'N/A'}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {subscription.email || 'N/A'}
+                      </div>
+                      <div className="text-sm text-gray-500">
+                        {subscription.phone || 'N/A'}
+                      </div>
+                    </td>
+                    <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
+                      {formatAmount(subscription.amount)}
+                    </td>
+                    <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700 uppercase">
+                      {subscription.plan || 'N/A'}
+                    </td>
+                    <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
+                      {subscription.country || 'N/A'}
+                    </td>
+                    <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
+                      {formatDate(subscription.subscriptionDate)}
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr>
+                  <td colSpan="5" className="px-5 py-4 text-center text-gray-500">No subscriptions found.</td>
+                </tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+      )}
     </div>
+  );
+};
 
-    <div className="mt-6 overflow-x-auto">
-      <table className="w-full divide-y divide-gray-200">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="px-5 py-3 w-1/4 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">
-              Name
-            </th>
-            <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider w-1/20">
-              Amount
-            </th>
-            <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider w-1/20">
-              Plan
-            </th>
-            <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider w-1/20">
-              Country
-            </th>
-            <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider w-1/20">
-              Subscription Date
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          {/* Add rows here */}
-          {[
-            {
-              name: "The Grace place,CGMi",
-              email: "aigbogunchris@gmail.com",
-              phone: "+2348064371526",
-              plan: "Basic plan",
-              country: "Nigeria",
-              subscriptionDate: "08/07/2025",
-            },
-            {
-              name: "Zone 3",
-              email: "zone_3_3@paguganda.org",
-              phone: "",
-              plan: "Starter plan",
-              country: "Uganda",
-              subscriptionDate: "08/07/2025",
-            },
-            {
-              name: "RCCG The Faith City",
-              email: "rccgthefaithcity@gmail.com",
-              phone: "+234 803 200 0998",
-              plan: "Starter plan",
-              country: "Nigeria",
-              subscriptionDate: "07/07/2025",
-            },
-            {
-              name: "Anglican Church of the Nativity",
-              email: "churchofdnativity@gmail.com",
-              phone: "+2348120492095",
-              plan: "Growth plan",
-              country: "Nigeria",
-              subscriptionDate: "07/07/2025",
-            },
-            {
-              name: "EVANGELICAL ANGLICAN CHURCH OF THE TRINITY ELEBU",
-              email: "evacotmediaelebu@gmail.com",
-              phone: "+2348064814342",
-              plan: "Starter plan",
-              country: "Nigeria",
-              subscriptionDate: "06/07/2025",
-            },
-          ].map((subscription, index) => (
-            <tr key={index}>
-              <td className="px-5 py-4  text-sm text-gray-700">
-                <div className="text-sm font-medium text-gray-900">
-                  {subscription.name}
-                </div>
-                <div className="text-sm text-gray-500">
-                  {subscription.email}
-                </div>
-              </td>
-              <td className="px-5 py-4 w-30px text-sm text-gray-700">
-                {subscription.phone}
-              </td>
-              <td className="px-5 py-4 w-30px text-sm text-gray-700 uppercase">
-                {subscription.plan}
-              </td>
-              <td className="px-5 py-4 w-30px text-sm text-gray-700">
-                {subscription.country}
-              </td>
-              <td className="px-5 py-4 w-30px text-sm text-gray-700">
-                {subscription.subscriptionDate}
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
-
-    {/* <div>
-      <table className="w-full divide-y divide-gray-200">
-        <thead className="bg-gray-200">
-          <tr>
-            <th className="px-5 py-3 w-1/4 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">
-              Name
-            </th>
-            <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider w-1/10">
-              Amount
-            </th>
-            <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider w-1/20">
-              Plan
-            </th>
-          </tr>
-        </thead>
-        <tbody className="bg-white divide-y divide-gray-200">
-          <tr>
-            <td className="px-5 py-4  text-sm text-gray-700">
-              <div className="text-sm font-medium text-gray-900">
-                Harvesters Church, Abuja
-              </div>
-            </td>
-            <td className="text-sm px-5 py-4 text-gray-500">Basic</td>
-            <td className="px-5 py-4  text-sm text-gray-700">Active</td>
-          </tr>
-          <tr>
-            <td className="px-5 py-4  text-sm text-gray-700">
-              <div className="text-sm font-medium text-gray-900">
-                Harvesters Church, Abuja
-              </div>
-            </td>
-            <td className="text-sm px-5 py-4 text-gray-500">Basic</td>
-            <td className="px-5 py-4 w-30px text-sm text-gray-700">Active</td>
-          </tr>
-          <tr>
-            <td className="px-5 py-4  text-sm text-gray-700">
-              <div className="text-sm font-medium text-gray-900">
-                Harvesters Church, Abuja
-              </div>
-            </td>
-            <td className="text-sm px-5 py-4 text-gray-500">Basic</td>
-            <td className="px-5 py-4 w-30px text-sm text-gray-700">Active</td>
-          </tr>
-          <tr>
-            <td className="px-5 py-4  text-sm text-gray-700">
-              <div className="text-sm font-medium text-gray-900">
-                Harvesters Church, Abuja
-              </div>
-            </td>
-            <td className="text-sm px-5 py-4 text-gray-500">Basic</td>
-            <td className="px-5 py-4 w-30px text-sm text-gray-700">Active</td>
-          </tr>
-          <tr>
-            <td className="px-5 py-4  text-sm text-gray-700">
-              <div className="text-sm font-medium text-gray-900">
-                Harvesters Church, Abuja
-              </div>
-            </td>
-            <td className="text-sm px-5 py-4 text-gray-500">Basic</td>
-            <td className="px-5 py-4 w-30px text-sm text-gray-700">Active</td>
-          </tr>
-          <tr>
-            <td className="px-5 py-4  text-sm text-gray-700">
-              <div className="text-sm font-medium text-gray-900">
-                Harvesters Church, Abuja
-              </div>
-            </td>
-            <td className="text-sm px-5 py-4 text-gray-500">Basic</td>
-            <td className="px-5 py-4 w-30px text-sm text-gray-700">Active</td>
-          </tr>
-        </tbody>
-      </table>
-    </div> */}
-  </div>
-);
 
 export default SubscriptionPage;
