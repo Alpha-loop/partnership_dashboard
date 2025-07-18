@@ -9,7 +9,7 @@ export const getPartnerSubPlans = async () => {
 };
 
 export const getRecentSMS = async () => {
-  return fetchData('/api/partneradmin/partner/recentSMS');
+  return fetchData.get('/api/partneradmin/partner/recentSMS');
 };
 
 export const getExpiredAccounts = async () => {

@@ -37,27 +37,27 @@ const SubscriptionPage = ({ openNavbar }) => {
   }, []); // Empty dependency array means this runs once on mount
 
   // Client-side filtering for the table based on search term
-  const filteredSubscriptions = subscriptions.filter(subscription => {
-    const name = subscription.name || '';
-    const email = subscription.email || '';
-    const phone = subscription.phone || '';
-    const plan = subscription.plan || '';
-    const country = subscription.country || '';
-    const subscriptionDate = subscription.subscriptionDate || '';
-    const amount = subscription.amount ? String(subscription.amount) : ''; // Convert to string for search
+  // const filteredSubscriptions = subscriptions.filter(subscription => {
+  //   const name = subscription.name || '';
+  //   const email = subscription.email || '';
+  //   const phone = subscription.phone || '';
+  //   const plan = subscription.plan || '';
+  //   const country = subscription.country || '';
+  //   const subscriptionDate = subscription.subscriptionDate || '';
+  //   const amount = subscription.amount ? String(subscription.amount) : ''; // Convert to string for search
 
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+  //   const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-    return (
-      name.toLowerCase().includes(lowerCaseSearchTerm) ||
-      email.toLowerCase().includes(lowerCaseSearchTerm) ||
-      phone.toLowerCase().includes(lowerCaseSearchTerm) ||
-      plan.toLowerCase().includes(lowerCaseSearchTerm) ||
-      country.toLowerCase().includes(lowerCaseSearchTerm) ||
-      subscriptionDate.toLowerCase().includes(lowerCaseSearchTerm) ||
-      amount.includes(lowerCaseSearchTerm)
-    );
-  });
+  //   return (
+  //     name.toLowerCase().includes(lowerCaseSearchTerm) ||
+  //     email.toLowerCase().includes(lowerCaseSearchTerm) ||
+  //     phone.toLowerCase().includes(lowerCaseSearchTerm) ||
+  //     plan.toLowerCase().includes(lowerCaseSearchTerm) ||
+  //     country.toLowerCase().includes(lowerCaseSearchTerm) ||
+  //     subscriptionDate.toLowerCase().includes(lowerCaseSearchTerm) ||
+  //     amount.includes(lowerCaseSearchTerm)
+  //   );
+  // });
 
   // Helper function to format date if needed (assuming subscriptionDate is a string like "MM/DD/YYYY")
   const formatDate = (dateString) => {
@@ -120,8 +120,8 @@ const SubscriptionPage = ({ openNavbar }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredSubscriptions.length > 0 ? (
-                filteredSubscriptions.map((subscription, index) => (
+              {subscriptions.length > 0 ? (
+                subscriptions.map((subscription, index) => (
                   // Use a unique identifier from your backend if available (e.g., subscription.id)
                   // Falling back to index if no unique ID is guaranteed, but ID is preferred.
                   <tr key={subscription.id || index} className="hover:bg-gray-100">

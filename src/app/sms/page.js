@@ -1,12 +1,12 @@
-'use client'; // Important for client-side interactivity
+'use client'; 
 
 import React, { useState, useEffect } from 'react';
 import { Menu } from 'lucide-react';
 
-// Import the API service functions
+
 import {
   getRecentSMS,
-} from '../../services/partner'; // Adjust the path based on your file structure
+} from '../../services/partner'; 
 
 const SMSPage = ({ openNavbar }) => {
   const [smsRecords, setSmsRecords] = useState([]);
@@ -45,31 +45,30 @@ const SMSPage = ({ openNavbar }) => {
     }
   };
 
-  // Fetch data when component mounts or when currentView changes
-  // useEffect(() => {
-    
-  // }, []); // Re-fetch data when the active tab changes
+  useEffect(() => {
+    fetchSmsData();
+  }, []);
 
-  fetchSmsData();
+  
 
   // Client-side filtering for the table based on search term
-  const filteredSmsRecords = smsRecords.filter(record => {
-    const name = record.name || '';
-    const amount = record.amount ? String(record.amount) : '';
-    const smsUnit = record.smsUnit ? String(record.smsUnit) : '';
-    const smsBalance = record.smsBalance ? String(record.smsBalance) : '';
-    const purchaseDate = record.purchaseDate || '';
+  // const filteredSmsRecords = smsRecords.filter(record => {
+  //   const name = record.name || '';
+  //   const amount = record.amount ? String(record.amount) : '';
+  //   const smsUnit = record.smsUnit ? String(record.smsUnit) : '';
+  //   const smsBalance = record.smsBalance ? String(record.smsBalance) : '';
+  //   const purchaseDate = record.purchaseDate || '';
 
-    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+  //   const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-    return (
-      name.toLowerCase().includes(lowerCaseSearchTerm) ||
-      amount.includes(lowerCaseSearchTerm) ||
-      smsUnit.includes(lowerCaseSearchTerm) ||
-      smsBalance.includes(lowerCaseSearchTerm) ||
-      purchaseDate.toLowerCase().includes(lowerCaseSearchTerm)
-    );
-  });
+  //   return (
+  //     name.toLowerCase().includes(lowerCaseSearchTerm) ||
+  //     amount.includes(lowerCaseSearchTerm) ||
+  //     smsUnit.includes(lowerCaseSearchTerm) ||
+  //     smsBalance.includes(lowerCaseSearchTerm) ||
+  //     purchaseDate.toLowerCase().includes(lowerCaseSearchTerm)
+  //   );
+  // });
 
   // Helper function to format date if needed (assuming purchaseDate is a string like "MM/DD/YYYY")
   const formatDate = (dateString) => {
@@ -142,8 +141,8 @@ const SMSPage = ({ openNavbar }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {filteredSmsRecords.length > 0 ? (
-                filteredSmsRecords.map((sms, index) => (
+              {smsRecords.length > 0 ? (
+                smsRecords.map((sms, index) => (
                   // Use a unique identifier from your backend if available (e.g., sms.id)
                   // Falling back to index if no unique ID is guaranteed, but ID is preferred.
                   <tr key={sms.id || index} className="hover:bg-gray-100">
