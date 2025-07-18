@@ -1,52 +1,61 @@
-// apiService.js
 
-const BASE_URL = 'http://ipoliceapp.azurewebsites.net';
+import axios from 'axios';
 
-const fetchData = async (endpoint, options = {}) => {
-  const url = `${BASE_URL}${endpoint}`;
-  console.log(`Fetching from: ${url}`);
+const fetchData = axios.create({
+    baseURL: 'https://ipoliceapp.azurewebsites.net',
+    headers: {
+        'Content-Type': 'application/json',
+    },
+});
 
-  // Prepare headers
-  const headers = {
-    'Content-Type': 'application/json',
-    ...options.headers,
-  };
+fetchData.interceptors.request.use(
+    (config) => {
+        const token = localStorage.getItem('authToken');
 
-  const token = localStorage.getItem("authToken");
-
-  
-  if (token) {
-    headers.Authorization = `Bearer ${token}`;
-  }
-
-  try {
-    const response = await fetch(url, {
-      ...options,
-      headers: headers, 
-    });
-
-    if (!response.ok) {
-      
-      const errorBody = await response.text();
-      let errorMessage = `HTTP error! Status: ${response.status} - ${response.statusText}`;
-      try {
-        const jsonError = JSON.parse(errorBody);
-        if (jsonError.message) {
-          errorMessage += ` - ${jsonError.message}`;
-        } else {
-          errorMessage += ` - ${errorBody}`;
+        if (token) {
+            config.headers.Authorization = `Bearer ${token}`; 
         }
-      } catch (e) {
-        errorMessage += ` - ${errorBody}`;
-      }
-      throw new Error(errorMessage);
+        return config;
+    },
+    (error) => {
+        return Promise.reject(error);
     }
+);
 
-    return await response.json();
-  } catch (error) {
-    console.error(`Error fetching ${endpoint}:`, error);
-    throw error;
-  }
-};
+
+fetchData.interceptors.response.use(
+    (response) => {
+        return response;
+    },
+    (error) => {
+       
+        if (error.response) {
+            switch (error.response.status) {
+                case 401: 
+                    console.error('Unauthorized: Please log in again.');
+                    
+                    localStorage.removeItem('authToken');
+                    window.location.href = '/login'; 
+                    break;
+                case 403:
+                    console.error('Forbidden: You do not have permission to access this resource.');
+                    break;
+                case 404:
+                    console.error('Resource not found.');
+                    break;
+                case 500:
+                    console.error('Server error: Something went wrong on the server.');
+                    break;
+                default:
+                    console.error(`API Error: ${error.response.status} - ${error.response.data.message || error.message}`);
+            }
+        } else if (error.request) {
+            console.error('Network Error: No response received from server.');
+        } else {
+            console.error('Request Error:', error.message);
+        }
+        return Promise.reject(error);
+    }
+);
 
 export default fetchData;

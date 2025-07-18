@@ -1,17 +1,31 @@
 import fetchData  from '../../backend/index'
 
 export const getBasicSaasInformation = async () => {
-  return fetchData('/api/partneradmin/partner/GetBasicSaasInformation');
+  const token = localStorage.getItem('authToken');
+  return fetchData.get('/api/PartnerAdmin/partner/GetBasicSaasInformation', );
 };
 
 export const getActiveAccounts = async () => {
-  // Assuming this endpoint returns a count directly or an object with a 'count'
-  const data = await fetchData('/api/partneradmin/partner/GetActiveAccounts');
-  return data.count !== undefined ? data.count : data;
+  const data = await fetchData.get('/api/partneradmin/partner/GetActiveAccounts');
+  return data;
 };
 
 export const getInactiveAccounts = async () => {
-  // Assuming this endpoint returns a count directly or an object with a 'count'
-  const data = await fetchData('/api/partneradmin/partner/GetInActiveAccounts');
-  return data.count !== undefined ? data.count : data;
+  const data = await fetchData.get('/api/partneradmin/partner/GetInActiveAccounts');
+  return data;
 };
+
+export const getPlanSummary = async () => {
+  const data = await fetchData.get('/api/partneradmin/partner/GetPlanSummaryReportAsync');
+  return data;
+}
+
+export const getExpiredAccounts = async () => {
+  const data = await fetchData.get('/api/partneradmin/partner/expiredaccounts')
+  return data;
+}
+
+export const getExpiringAccounts = async () => {
+  const data = await fetchData.get('/api/partneradmin/partner/expiringaccounts');
+  return data;
+}

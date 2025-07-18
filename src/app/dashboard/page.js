@@ -1,16 +1,17 @@
+'use client'
+
 import React, { useState, useEffect } from 'react';
 import Tablecontent from "@/component/table";
 import Expirecontent from "@/component/expiretable";
 import DashboardGraph from "@/component/graph";
 import { Menu } from 'lucide-react';
-
-// Import the API service functions
 import {
   getBasicSaasInformation,
   getActiveAccounts,
   getInactiveAccounts,
-  // Add other API functions here as you integrate them into Tablecontent, Expirecontent, Graph
-} from '../../services/dashboard'; // Adjust the path based on your file structure
+  getPlanSummary
+  
+} from '../../services/dashboard';
 
 const DashboardPage = ({ openNavbar }) => {
   // State for basic SaaS information
@@ -23,6 +24,8 @@ const DashboardPage = ({ openNavbar }) => {
   const [loading, setLoading] = useState(true);
   // State for error handling
   const [error, setError] = useState(null);
+
+  
 
   useEffect(() => {
     const fetchData = async () => {
@@ -96,10 +99,10 @@ const DashboardPage = ({ openNavbar }) => {
             <h3 className="text-sm font-semibold text-gray-700 mb-2">MRR</h3>
             <p className="text-green-500 font-semibold">%</p> {/* Placeholder for percentage change */}
           </div>
-          <p className="text-2xl font-bold text-gray-950">{formatNumber(saasInfo?.mrr)}</p>
+          <p className="text-2xl font-bold text-gray-950">{formatNumber(saasInfo.data.mrr)}</p>
           <p className="mt-3 text-sm font-semibold text-gray-700">ARR</p>
           <p className="text-2xl font-medium text-gray-950 text-right mt-3 mb-3">
-            {formatNumber(saasInfo?.arr)}
+            {formatNumber(saasInfo.data.arr)}
           </p>
         </div>
 
@@ -112,7 +115,7 @@ const DashboardPage = ({ openNavbar }) => {
             <p className="text-green-500 font-semibold">%</p>
           </div>
           <p className="text-2xl font-medium text-gray-950 text-right mt-12">
-            {formatNumber(saasInfo?.subscriptionRevenue)}
+            {formatNumber(saasInfo.data.subscriptionsRevenue)}
           </p>
         </div>
 
@@ -125,7 +128,7 @@ const DashboardPage = ({ openNavbar }) => {
             <p className="text-green-500 font-semibold">%</p>
           </div>
           <p className="text-2xl font-medium text-gray-950 text-right mt-12">
-            {formatNumber(saasInfo?.smsRevenue)}
+            {formatNumber(saasInfo.data.communicationRevenue)}
           </p>
         </div>
 
@@ -142,7 +145,7 @@ const DashboardPage = ({ openNavbar }) => {
             </div>
             <p className="text-green-500 font-semibold">%</p>
           </div>
-          <p className="text-2xl font-medium text-gray-950">{formatNumber(saasInfo?.currentMonthRevenue)}</p>
+          <p className="text-2xl font-medium text-gray-950">{formatNumber(saasInfo.data.subscriptionsRevenue + saasInfo.data.communicationRevenue)}</p>
           <div className="mb-4 mt-5">
             <h3 className="text-sm font-semibold text-gray-700">
               Average Monthly Revenue
@@ -150,7 +153,7 @@ const DashboardPage = ({ openNavbar }) => {
             <p className="text-sm text-gray-700 font-semibold">(MRR + SMS)</p>
           </div>
           <p className="text-2xl font-medium text-gray-950 text-right mt-3 mb-3">
-            {formatNumber(saasInfo?.averageMonthlyRevenue)}
+            {formatNumber(saasInfo.data.mrr + saasInfo.data.communicationRevenue)}
           </p>
         </div>
 
@@ -163,7 +166,7 @@ const DashboardPage = ({ openNavbar }) => {
             <p className="text-green-500 font-semibold">%</p>
           </div>
           <p className="text-2xl font-medium text-gray-950 text-right mt-12 mb-5">
-            {formatNumber(saasInfo?.revenuePerUser)}
+            {formatNumber(saasInfo.data.arpu)}
           </p>
         </div>
 
@@ -175,12 +178,12 @@ const DashboardPage = ({ openNavbar }) => {
             </h3>
             <p className="text-green-500 font-semibold">%</p>
           </div>
-          <p className="text-2xl font-medium text-gray-950">{formatNumber(saasInfo?.smsUnitsUsed)}</p>
+          <p className="text-2xl font-medium text-gray-950">{formatNumber(saasInfo.data.communicationUnitsUsed)}</p>
           <p className="mt-7 text-sm font-semibold text-gray-700">
             SMS Units Purchased
           </p>
           <p className="text-2xl font-medium text-gray-950 text-right mt-3 mb-3">
-            {formatNumber(saasInfo?.smsUnitsPurchased)}
+            {formatNumber(saasInfo?.data.communicationUnitsPurchased)}
           </p>
         </div>
 
@@ -190,11 +193,11 @@ const DashboardPage = ({ openNavbar }) => {
             <h3 className="text-sm font-semibold text-gray-700 mb-2">Sign Ups</h3>
             <p className="text-green-500 font-semibold">%</p>
           </div>
-          <p className="text-2xl font-bold text-gray-950">{formatNumber(saasInfo?.signUps)}</p>
+          <p className="text-2xl font-bold text-gray-950">{formatNumber(saasInfo.data.signUps)}</p>
           <p className="mt-7 text-sm font-semibold text-gray-700">
             Subscriptions
           </p>
-          <p className="text-2xl font-medium text-gray-950 text-right mt-1">{formatNumber(saasInfo?.subscriptions)}</p>
+          <p className="text-2xl font-medium text-gray-950 text-right mt-1">{formatNumber(saasInfo.data.subscriptions)}</p>
         </div>
 
         {/* Tenants (Total) */}
@@ -204,7 +207,7 @@ const DashboardPage = ({ openNavbar }) => {
             <p className="text-green-500 font-semibold">%</p>
           </div>
           <p className="text-2xl font-medium text-gray-950 text-right mt-12">
-            {formatNumber(saasInfo?.totalTenants)}
+            {formatNumber(saasInfo.data.tenants)}
           </p>
         </div>
 
@@ -216,12 +219,12 @@ const DashboardPage = ({ openNavbar }) => {
             </h3>
             <p className="text-green-500 font-semibold">%</p>
           </div>
-          <p className="text-2xl font-bold text-gray-950">{formatNumber(activeAccountsCount)}</p>
+          <p className="text-2xl font-bold text-gray-950">{formatNumber(saasInfo.data.tenantsActive)}</p>
           <p className="mt-7 text-sm font-semibold text-gray-700">
             In-Active Tenants
           </p>
           <p className="text-2xl font-medium text-gray-950 text-right mt-1">
-            {formatNumber(inactiveAccountsCount)}
+            {formatNumber(saasInfo.data.tenantsNonActive)}
           </p>
         </div>
       </div>

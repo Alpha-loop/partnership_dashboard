@@ -11,10 +11,8 @@ import { getAllTenants } from '../../services/partner'; // Assuming apiService.j
 import { getActiveAccounts, getBasicSaasInformation, getInactiveAccounts } from '../../services/dashboard'
 
 const TenantsPage = ({ openNavbar }) => {
-  const [tenants, setTenants] = useState([]);
-  const [totalTenants, setTotalTenants] = useState(0);
-  const [activeTenantsCount, setActiveTenantsCount] = useState(0);
-  const [inactiveTenantsCount, setInactiveTenantsCount] = useState(0);
+  const [allTenants, setAllTenants] = useState([]);
+  const [tenantsInfo, setTenantsInfo] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
   const [searchTerm, setSearchTerm] = useState('');
@@ -27,22 +25,12 @@ const TenantsPage = ({ openNavbar }) => {
       // Fetch all tenants for the table
       const allTenantsData = await getAllTenants();
       // Assuming allTenantsData is an array of tenant objects
-      setTenants(allTenantsData);
-
-      // Fetch active accounts count
-      // The apiService.js already handles extracting 'count' or returning direct data
-      const activeAccounts = await getActiveAccounts();
-      setActiveTenantsCount(activeAccounts);
-
-      // Fetch inactive accounts count
-      // The apiService.js already handles extracting 'count' or returning direct data
-      const inactiveAccounts = await getInactiveAccounts();
-      setInactiveTenantsCount(inactiveAccounts);
+      setAllTenants(allTenantsData.data);
 
       // Fetch basic SaaS information for total tenants count
       const basicSaasInfo = await getBasicSaasInformation();
       // Assuming basicSaasInfo has a property like 'totalTenants'
-      setTotalTenants(basicSaasInfo.totalTenants || 0);
+      setTenantsInfo(basicSaasInfo.data)
 
     } catch (err) {
       console.error("Failed to fetch tenants data:", err);
@@ -52,19 +40,19 @@ const TenantsPage = ({ openNavbar }) => {
     }
   };
 
-  // Fetch data on component mount
+  
   useEffect(() => {
     fetchTenantsData();
-  }, []); // Empty dependency array means this runs once on mount
+  }, []);
 
-  // Client-side filtering for the table based on search term
-  const filteredTenants = tenants.filter(tenant => {
+  
+  const filteredTenants = allTenants.filter(tenant => {
     const name = tenant.name || '';
     const email = tenant.email || '';
     const plan = tenant.plan || '';
     const country = tenant.country || '';
-    const size = tenant.size ? String(tenant.size) : ''; // Convert to string for search
-    const smsUnit = tenant.smsUnit ? String(tenant.smsUnit) : ''; // Convert to string for search
+    const size = tenant.size ? String(tenant.size) : ''; 
+    const smsUnit = tenant.smsUnit ? String(tenant.smsUnit) : ''; 
     const expiry = tenant.expiry || '';
 
     const lowerCaseSearchTerm = searchTerm.toLowerCase();
@@ -83,7 +71,7 @@ const TenantsPage = ({ openNavbar }) => {
   return (
     <div className="p-8 font-sans">
       <button
-        onClick={openNavbar} // Call the function to open the navbar
+        onClick={openNavbar} 
         className="lg:hidden fixed top-4 left-4 p-2 bg-blue-600 text-white rounded-full shadow-lg z-30"
         aria-label="Open navigation"
       >
@@ -104,7 +92,7 @@ const TenantsPage = ({ openNavbar }) => {
                 <p className="text-green-500 font-semibold">%</p>
               </div>
               <p className="text-2xl font-medium text-gray-950 text-right mt-12">
-                {totalTenants}
+                {tenantsInfo.tenants}
               </p>
             </div>
             <div className="bg-gray-200 p-6 rounded-lg shadow-md hover:scale-105 transition-transform duration-300">
@@ -115,7 +103,7 @@ const TenantsPage = ({ openNavbar }) => {
                 <p className="text-green-500 font-semibold">%</p>
               </div>
               <p className="text-2xl font-medium text-gray-950 text-right mt-12">
-                {activeTenantsCount}
+                {tenantsInfo.tenantsActive}
               </p>
             </div>
             <div className="bg-gray-200 p-6 rounded-lg shadow-md hover:scale-105 transition-transform duration-300">
@@ -124,17 +112,17 @@ const TenantsPage = ({ openNavbar }) => {
                   In-Active Tenants
                 </h3>
                 <p className="text-2xl font-medium text-gray-950 text-right mt-12">
-                  {inactiveTenantsCount}
+                  {tenantsInfo.tenantsNonActive}
                 </p>
               </div>
             </div>
           </div>
 
-          <div className="flex justify-end mt-12 mb-4"> {/* Changed justify-self-end to justify-end */}
+          <div className="flex justify-end mt-12 mb-4">
             <input
               type="text"
               className="border border-gray-300 rounded-l-lg py-2 px-4 bg-stone-700 text-gray-200 outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent" // Added focus styles, rounded-l-lg
-              placeholder="Search tenants..." // More generic search placeholder
+              placeholder="Search tenants..." 
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
             />
@@ -174,8 +162,7 @@ const TenantsPage = ({ openNavbar }) => {
               <tbody className="bg-white divide-y divide-gray-200">
                 {filteredTenants.length > 0 ? (
                   filteredTenants.map((tenant, index) => (
-                    // Use a unique identifier from your backend if available (e.g., tenant.id)
-                    // Falling back to index if no unique ID is guaranteed, but ID is preferred.
+                    
                     <tr key={tenant.id || index}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
@@ -186,20 +173,20 @@ const TenantsPage = ({ openNavbar }) => {
                       </td>
                       <td className="py-4 whitespace-nowrap">
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-gray-500">
-                          {tenant.plan || 'N/A'}
+                          {tenant.subscriptionPlan || 'N/A'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
                         {tenant.country || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {tenant.size || 'N/A'}
+                        {tenant.membershipSize || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {tenant.smsUnit || 'N/A'}
+                        {tenant.smsUnits || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {tenant.expiry || 'N/A'}
+                        {tenant.expiryDate || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-md font-bold text-gray-500 tracking-wider">
                         <p>...</p> {/* Keep the existing "..." for action */}

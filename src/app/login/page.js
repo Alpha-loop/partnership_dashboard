@@ -37,38 +37,41 @@
 //   );
 // };
 
-'use client'; // Important for client-side interactivity
+'use client';
 
 import React, { useState } from 'react';
-import loginUser from '../../services/auth'; // Adjust the path as needed
+import loginUser from '../../services/auth';
+import { useRouter } from 'next/navigation';
+// import DashboardPage from '../dashboard'
 
 const LoginPage = () => {
-  const [username, setUsername] = useState(''); // Changed from email to username
+  const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
-  const [isFamily, setIsFamily] = useState(true); // Added for the 'isFamily' parameter, hardcoded to true as per curl
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
-  const [successMessage, setSuccessMessage] = useState(null); // For success feedback
+  const [successMessage, setSuccessMessage] = useState(null);
+
+  const router = useRouter()
 
   const handleSubmit = async (e) => {
-    e.preventDefault(); // Prevent default form submission behavior
+    e.preventDefault();
     setLoading(true);
     setError(null);
     setSuccessMessage(null);
 
     try {
-      // Call loginUser with username, password, and isFamily
-      const response = await loginUser(username, password, isFamily);
-      console.log('Login successful:', response);
+      const { data } = await loginUser(username, password);
+      console.log('Login successful:', data);
       setSuccessMessage('Login successful! Redirecting...');
-      // In a real application, you would typically:
-      // 1. Store the authentication token (e.g., in localStorage, context, or Redux)
-      // 2. Redirect the user to the dashboard or another protected route
-      // Example: history.push('/dashboard'); or navigate('/dashboard');
-      // For this example, we'll just show the success message.
+      if (data) {
+        localStorage.setItem('authToken', data.token);
+      } else {
+        console.warn('Login response did not contain a token. Check backend response structure.');
+      }
+      router.push('/');
+      
     } catch (err) {
       console.error('Login failed:', err);
-      // Display a more user-friendly error if the message is too technical
       setError(err.message || 'An unexpected error occurred during login. Please try again.');
     } finally {
       setLoading(false);
@@ -88,7 +91,7 @@ const LoginPage = () => {
               Username
             </label>
             <input
-              type="text" // Changed type to text for username
+              type="text"
               id="username"
               className="w-full px-4 py-2 border border-gray-300 rounded-lg bg-gray-50 text-gray-900 placeholder-gray-500 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:border-transparent transition duration-150"
               placeholder="Enter your username"
@@ -114,23 +117,6 @@ const LoginPage = () => {
             />
           </div>
 
-          {/* Optional: Add a checkbox for isFamily if it needs to be dynamic */}
-          {/*
-          <div className="mb-4 flex items-center">
-            <input
-              type="checkbox"
-              id="isFamily"
-              className="h-4 w-4 text-blue-600 focus:ring-blue-500 border-gray-300 rounded"
-              checked={isFamily}
-              onChange={(e) => setIsFamily(e.target.checked)}
-              disabled={loading}
-            />
-            <label htmlFor="isFamily" className="ml-2 block text-sm text-gray-900">
-              Are you a family account?
-            </label>
-          </div>
-          */}
-
           {error && (
             <div className="mb-4 p-3 bg-red-100 border border-red-400 text-red-700 rounded-md text-sm text-center" role="alert">
               {error}
@@ -146,7 +132,7 @@ const LoginPage = () => {
           <button
             type="submit"
             className="w-full bg-blue-800 text-white font-semibold py-3 px-4 rounded-lg hover:bg-blue-700 transition duration-200 focus:outline-none focus:ring-2 focus:ring-blue-600 focus:ring-offset-2 disabled:opacity-50 disabled:cursor-not-allowed"
-            disabled={loading} // Disable button while loading
+            disabled={loading}
           >
             {loading ? 'Logging in...' : 'Login'}
           </button>

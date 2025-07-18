@@ -1,17 +1,129 @@
+import React, { useState, useEffect } from 'react';
+import { getExpiredAccounts, getExpiringAccounts } from '../services/dashboard'; // Make sure paths are correct
+import { Menu } from 'lucide-react'; // Assuming you still need this for the button
+
 const Expirecontent = () => {
+  const [expiredAcct, setExpiredAcct] = useState([]);
+  const [expiringAcct, setExpiringAcct] = useState([]);
+  const [loading, setLoading] = useState(true);
+  const [error, setError] = useState(null);
+  // State to control which table is displayed (e.g., 'expiring' or 'expired')
+  const [activeTab, setActiveTab] = useState('expiring'); // Default to 'expiring'
+
+  useEffect(() => {
+    const fetchData = async () => { // Renamed tData to fetchData for clarity
+      try {
+        setLoading(true); // Start loading
+        setError(null);   // Clear any previous errors
+
+        const expiredRes = await getExpiredAccounts();
+        console.log('Expired Accounts Raw Response:', expiredRes);
+        // Assuming the array is directly in res.data
+        if (Array.isArray(expiredRes.data)) {
+          setExpiredAcct(expiredRes.data);
+        } else {
+          console.warn('Expired Accounts data is not an array:', expiredRes.data);
+          // Handle case where backend might return an object with a nested array
+          // e.g., if it's { data: [...] }
+          if (expiredRes.data && Array.isArray(expiredRes.data.data)) {
+            setExpiredAcct(expiredRes.data.data);
+          } else {
+             setError(prev => prev ? prev + "\n" + "Invalid Expired Accounts data format." : "Invalid Expired Accounts data format.");
+          }
+        }
+
+
+        const expiringRes = await getExpiringAccounts();
+        console.log('Expiring Accounts Raw Response:', expiringRes);
+        // Assuming the array is directly in response.data
+        if (Array.isArray(expiringRes.data)) {
+          setExpiringAcct(expiringRes.data);
+        } else {
+          console.warn('Expiring Accounts data is not an array:', expiringRes.data);
+          if (expiringRes.data && Array.isArray(expiringRes.data.data)) {
+            setExpiringAcct(expiringRes.data.data);
+          } else {
+             setError(prev => prev ? prev + "\n" + "Invalid Expiring Accounts data format." : "Invalid Expiring Accounts data format.");
+          }
+        }
+
+      } catch (err) {
+        console.error('Error fetching dashboard data:', err);
+        setError(err.message || 'Failed to fetch account data.'); // Store error message
+      } finally {
+        setLoading(false); // End loading
+      }
+    };
+
+    fetchData();
+  }, []); // Empty dependency array means this effect runs once on mount
+
+  // Log the state variables to verify they hold the fetched data
+  console.log('Expired Accounts State:', expiredAcct);
+  console.log('Expiring Accounts State:', expiringAcct);
+
+  // Determine which data to display based on the activeTab
+  const currentTableData = activeTab === 'expiring' ? expiringAcct : expiredAcct;
+
+  // Function to calculate expiry status (re-used logic)
+  const getExpiryStatus = (expiryDateString) => {
+    if (!expiryDateString) return 'N/A';
+    // Handle date format: "DD/MM/YYYY" -> "YYYY-MM-DD" for Date constructor
+    const [day, month, year] = expiryDateString.split('/');
+    const expiryDate = new Date(`${year}-${month}-${day}`);
+    const today = new Date();
+    // Reset time to start of day for accurate day difference
+    expiryDate.setHours(0, 0, 0, 0);
+    today.setHours(0, 0, 0, 0);
+
+    const diffTime = expiryDate.getTime() - today.getTime();
+    const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+
+    if (diffDays < 0) return 'Expired';
+    if (diffDays === 0) return 'Expires today';
+    if (diffDays === 1) return 'Expires tomorrow';
+    return `Expires in ${diffDays} days`;
+  };
+
+  if (loading) {
+    return (
+      <div className="border mt-6 p-4 bg-gray-100 shadow-md rounded-lg flex justify-center items-center h-40">
+        <p>Loading account data...</p>
+      </div>
+    );
+  }
+
+  if (error) {
+    return (
+      <div className="border mt-6 p-4 bg-red-100 text-red-700 shadow-md rounded-lg h-40 flex justify-center items-center">
+        <p>Error: {error}</p>
+      </div>
+    );
+  }
+
   return (
     <div className="border mt-6 p-6 bg-gray-100 shadow-md rounded-lg">
       {/* Header with toggle buttons */}
       <div className="sm:flex-row justify-between items-start sm:items-center gap-4 mb-6">
         <div className="flex space-x-4 overflow-x-auto pb-2 w-full sm:w-auto">
-          <button className="text-gray-950 text-xl sm:text-2xl font-semibold whitespace-nowrap focus:underline hover:underline">
+          <button
+            onClick={() => setActiveTab('expiring')}
+            className={`text-xl sm:text-2xl font-semibold whitespace-nowrap focus:underline hover:underline ${
+              activeTab === 'expiring' ? 'text-blue-700 underline' : 'text-gray-950'
+            }`}
+          >
             Expiring Accounts
           </button>
-          <button className="text-gray-950 text-xl sm:text-2xl font-semibold whitespace-nowrap focus:underline hover:underline">
+          <button
+            onClick={() => setActiveTab('expired')}
+            className={`text-xl sm:text-2xl font-semibold whitespace-nowrap focus:underline hover:underline ${
+              activeTab === 'expired' ? 'text-blue-700 underline' : 'text-gray-950'
+            }`}
+          >
             Expired Accounts
           </button>
         </div>
-        
+
         {/* Filter dropdown */}
         <div className="flex items-center gap-3 w-full sm:w-auto">
           <p className="text-gray-950 whitespace-nowrap">Expiring day</p>
@@ -44,81 +156,36 @@ const Expirecontent = () => {
             </tr>
           </thead>
           <tbody className="bg-white divide-y divide-gray-200">
-            {[
-              {
-                name: "DOMINION CITY JABI",
-                email: "dcjabichurch@gmail.com",
-                phone: "+234 901 067 5928",
-                plan: "STARTER PLAN",
-                expiryDate: "08/07/2025",
-              },
-              {
-                name: "Grace Cathedral",
-                email: "gracecathedraldhmm@gmail.com",
-                phone: "+233 20 591 1275",
-                plan: "BASIC PLAN",
-                expiryDate: "10/07/2025",
-              },
-              {
-                name: "REDEEMED CHRISTIAN CHURCH OF GOD COVENANT CHAPEL IBOGUN",
-                email: "rccgcovenantchapelibogun@gmail.com",
-                phone: "+234 803 435 7623",
-                plan: "STARTER PLAN",
-                expiryDate: "10/07/2025",
-              },
-              {
-                name: "The Glory of Liberty int' Ministry",
-                email: "pstfreedomodine2018@gmail.com",
-                phone: "+234 805 492 0935",
-                plan: "GROWTH PLAN",
-                expiryDate: "10/07/2025",
-              },
-              {
-                name: "Gospel Mission Ministries Swakopmund",
-                email: "gospelmission9@gmail.com",
-                phone: "+264 81 605 9462",
-                plan: "BASIC PLAN",
-                expiryDate: "12/07/2025",
-              },
-              {
-                name: "New Realms Christian Centre",
-                email: "newrealmschristiancentre@gmail.com",
-                phone: "08185418764",
-                plan: "STARTER PLAN",
-                expiryDate: "12/07/2025",
-              },
-            ].map((table, index) => (
-              <tr key={index} className="hover:bg-gray-50">
-                <td className="px-4 py-3">
-                  <div className="text-sm font-medium text-gray-900">{table.name}</div>
-                  <div className="text-sm text-gray-500 mt-1">{table.email}</div>
-                  <div className="text-sm text-gray-500">{table.phone}</div>
-                </td>
-                <td className="px-4 py-3">
-                  <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
-                    {table.plan}
-                  </span>
-                </td>
-                <td className="px-4 py-3 whitespace-nowrap">
-                  <div className="text-sm font-medium text-gray-900">
-                    {table.expiryDate}
-                  </div>
-                  <div className="text-xs text-red-600 font-medium mt-1">
-                    {(() => {
-                      const expiryDate = new Date(table.expiryDate.split('/').reverse().join('-'));
-                      const today = new Date();
-                      const diffTime = expiryDate - today;
-                      const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
-                      
-                      if (diffDays < 0) return 'Expired';
-                      if (diffDays === 0) return 'Expires today';
-                      if (diffDays === 1) return 'Expires tomorrow';
-                      return `Expires in ${diffDays} days`;
-                    })()}
-                  </div>
+            {currentTableData.length === 0 ? (
+              <tr>
+                <td colSpan="3" className="px-4 py-3 text-center text-sm text-gray-500">
+                  {activeTab === 'expiring' ? 'No expiring accounts found.' : 'No expired accounts found.'}
                 </td>
               </tr>
-            ))}
+            ) : (
+              currentTableData.map((account, index) => (
+                <tr key={account.id || index} className="hover:bg-gray-50"> {/* Use a unique 'id' from your data if available, otherwise index */}
+                  <td className="px-4 py-3">
+                    <div className="text-sm font-medium text-gray-900">{account.name}</div>
+                    <div className="text-sm text-gray-500 mt-1">{account.email}</div>
+                    <div className="text-sm text-gray-500">{account.phone}</div>
+                  </td>
+                  <td className="px-4 py-3">
+                    <span className="px-2 py-1 inline-flex text-xs leading-5 font-semibold rounded-full bg-gray-100 text-gray-800">
+                      {account.plan}
+                    </span>
+                  </td>
+                  <td className="px-4 py-3 whitespace-nowrap">
+                    <div className="text-sm font-medium text-gray-900">
+                      {account.expiryDate}
+                    </div>
+                    <div className={`text-xs font-medium mt-1 ${getExpiryStatus(account.expiryDate).includes('Expired') ? 'text-red-600' : 'text-green-600'}`}>
+                      {getExpiryStatus(account.expiryDate)}
+                    </div>
+                  </td>
+                </tr>
+              ))
+            )}
           </tbody>
         </table>
       </div>

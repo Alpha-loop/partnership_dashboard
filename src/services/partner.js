@@ -1,7 +1,7 @@
 import fetchData  from '../../backend/index'
 
 export const getAllTenants = async () => {
-  return fetchData('/api/partneradmin/GetAllTenants');
+  return fetchData.get('/api/partneradmin/GetAllTenants');
 };
 
 export const getPartnerSubPlans = async () => {
