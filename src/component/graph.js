@@ -1,3 +1,5 @@
+/* eslint-disable @next/next/no-sync-scripts */
+
 import React from 'react';
 import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
@@ -139,8 +141,6 @@ const DashboardGraph = () => {
 
   return (
     <div className="p-8 bg-white min-h-screen font-sans pb-0">
-      {/* Tailwind CSS CDN */}
-      <script src="https://cdn.tailwindcss.com"></script>
 
       <div className="h-16 border-gray-300 w-full border-2 border-gray-400 mb-8 py-4 px-5 bg-gray-100">
         <h1 className="text-2xl font-bold text-gray-900">Visual Analytics</h1>

@@ -32,8 +32,6 @@ const App = () => {
         return <SMSPage {...pageProps} />;
       case 'subscription':
         return <SubscriptionPage {...pageProps} />;
-      case 'logout':
-        return <LogoutPage {...pageProps} />;
       default:
         return <TenantsPage {...pageProps} />;
     }

@@ -46,9 +46,11 @@ const SMSPage = ({ openNavbar }) => {
   };
 
   // Fetch data when component mounts or when currentView changes
-  useEffect(() => {
-    fetchSmsData();
-  }, [currentView]); // Re-fetch data when the active tab changes
+  // useEffect(() => {
+    
+  // }, []); // Re-fetch data when the active tab changes
+
+  fetchSmsData();
 
   // Client-side filtering for the table based on search term
   const filteredSmsRecords = smsRecords.filter(record => {
