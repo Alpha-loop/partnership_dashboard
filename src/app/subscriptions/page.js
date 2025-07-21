@@ -130,23 +130,20 @@ const SubscriptionPage = ({ openNavbar }) => {
                         {subscription.name || 'N/A'}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {subscription.email || 'N/A'}
-                      </div>
-                      <div className="text-sm text-gray-500">
                         {subscription.phone || 'N/A'}
                       </div>
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
-                      {formatAmount(subscription.amount)}
+                      {subscription.subscriptionPlan || 'N/A'}
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700 uppercase">
-                      {subscription.plan || 'N/A'}
-                    </td>
-                    <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
                       {subscription.country || 'N/A'}
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
                       {formatDate(subscription.subscriptionDate)}
+                    </td>
+                    <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
+                      {subscription.expiryDate}
                     </td>
                   </tr>
                 ))

@@ -2,7 +2,7 @@
 import axios from 'axios';
 
 const fetchData = axios.create({
-    baseURL: 'https://ipoliceapp.azurewebsites.net',
+    baseURL: 'https://churchplusv3coreapi.azurewebsites.net/',
     headers: {
         'Content-Type': 'application/json',
     },

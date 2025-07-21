@@ -2,15 +2,23 @@
 
 import React from 'react';
 import { Home, Users, MessageSquare, CreditCard, LogOut, X } from 'lucide-react'; // Added X for close icon
+import { useRouter } from 'next/navigation';
 
 // Navbar Component
-const Navbar = ({ activeLink, setActiveLink, isNavbarOpen, closeNavbar }) => {
+const Navbar = ({ activeLink, setActiveLink, isNavbarOpen, closeNavbar, onLogout }) => {
   const navLinks = [
     { name: 'Dashboard', icon: Home, path: 'dashboard' },
     { name: 'Tenants', icon: Users, path: 'tenants' },
     { name: 'SMS', icon: MessageSquare, path: 'sms' },
     { name: 'Subscription', icon: CreditCard, path: 'subscription' },
   ];
+
+  const router = useRouter()
+
+  const handleLogout = () => {
+    onLogout(); // Call the logout handler to reset isLoggedIn and clear auth data
+    router.push('/'); // Redirect to the root (which shows the login page)
+  };
 
   return (
     <div
@@ -66,7 +74,7 @@ const Navbar = ({ activeLink, setActiveLink, isNavbarOpen, closeNavbar }) => {
       {/* Logout Link */}
       <div className="mt-50">
         <button
-          onClick={() => setActiveLink('logout')}
+          onClick={handleLogout}
           className={`flex items-center w-full p-3 rounded-lg text-left transition-all duration-200
             ${activeLink === 'logout' ? 'bg-blue-600 text-white shadow-inner' : 'text-blue-200 hover:bg-blue-600 hover:text-white'}`}
         >

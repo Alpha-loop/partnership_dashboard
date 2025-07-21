@@ -7,7 +7,7 @@ import { Menu } from 'lucide-react';
 // Adjust the path based on where you saved apiService.js relative to TenantsPage.jsx
 // For example, if apiService.js is in the root and TenantsPage.jsx is in src/pages, it might be '../../apiService'
 // If apiService.js is in src/utils and TenantsPage.jsx is in src/pages, it might be '../utils/apiService'
-import { getAllTenants } from '../../services/partner'; // Assuming apiService.js is one level up from this file
+import { getAllTenants } from '../../services/partner';
 import { getActiveAccounts, getBasicSaasInformation, getInactiveAccounts } from '../../services/dashboard'
 
 const TenantsPage = ({ openNavbar }) => {
@@ -163,30 +163,30 @@ const TenantsPage = ({ openNavbar }) => {
                 {filteredTenants.length > 0 ? (
                   filteredTenants.map((tenant, index) => (
                     
-                    <tr key={tenant.id || index}>
+                    <tr key={allTenants.id || index}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          {tenant.name || 'N/A'}
+                          {allTenants.name || 'N/A'}
                         </div>
-                        <div className="text-sm text-gray-500">{tenant.email || 'N/A'}</div>
-                        <div className="text-sm text-gray-500">{tenant.phone || 'N/A'}</div>
+                        <div className="text-sm text-gray-500">{allTenants.email || 'N/A'}</div>
+                        <div className="text-sm text-gray-500">{allTenants.phone || 'N/A'}</div>
                       </td>
                       <td className="py-4 whitespace-nowrap">
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-gray-500">
-                          {tenant.subscriptionPlan || 'N/A'}
+                          {allTenants.subscriptionPlan || 'N/A'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {tenant.country || 'N/A'}
+                        {allTenants.country || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {tenant.membershipSize || 'N/A'}
+                        {allTenants.membershipSize || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {tenant.smsUnits || 'N/A'}
+                        {allTenants.smsUnits || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {tenant.expiryDate || 'N/A'}
+                        {allTenants.expiryDate || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-md font-bold text-gray-500 tracking-wider">
                         <p>...</p> {/* Keep the existing "..." for action */}

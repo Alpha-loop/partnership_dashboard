@@ -44,7 +44,7 @@ import loginUser from '../../services/auth';
 import { useRouter } from 'next/navigation';
 // import DashboardPage from '../dashboard'
 
-const LoginPage = () => {
+const LoginPage = ({ onLoginSuccess }) => {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -68,7 +68,8 @@ const LoginPage = () => {
       } else {
         console.warn('Login response did not contain a token. Check backend response structure.');
       }
-      router.push('/');
+      // router.push('/dashboard');
+      onLoginSuccess();
       
     } catch (err) {
       console.error('Login failed:', err);

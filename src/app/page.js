@@ -6,11 +6,13 @@ import DashboardPage from './dashboard/page';
 import TenantsPage from './tenants/page';
 import SMSPage from './sms/page';
 import SubscriptionPage from './subscriptions/page';
+import LoginPage from './login/page'
 // import LogoutPage from './logout/page'; // Assuming you have a logout page now
 
 const App = () => {
-  const [activeLink, setActiveLink] = useState('dashboard');
+  const [activeLink, setActiveLink] = useState('login'); // Default to login
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
+  const [isLoggedIn, setIsLoggedIn] = useState(false);
 
 
   const handleNavLinkClick = (link) => {
@@ -18,10 +20,26 @@ const App = () => {
     setIsNavbarOpen(false);
   }
 
+  const handleLoginSuccess = () => {
+    setIsLoggedIn(true);
+    setActiveLink('dashboard'); // Set default page to dashboard after successful login
+  };
+
+  const handleLogout = () => {
+    setIsLoggedIn(false); // Reset login state
+    setActiveLink('login'); // Set active link to login
+    // Clear authentication data (replace with your actual logic)
+    document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/'; // Example: Clear auth cookie
+  };
+
   const openNavbar = () => setIsNavbarOpen(true);
 
   const renderContent = () => {
-    const pageProps = { openNavbar: openNavbar };
+    const pageProps = { openNavbar };
+
+    if (!isLoggedIn) {
+      return <LoginPage onLoginSuccess={handleLoginSuccess} />;
+    }
 
     switch (activeLink) {
       case 'dashboard':
@@ -33,27 +51,30 @@ const App = () => {
       case 'subscription':
         return <SubscriptionPage {...pageProps} />;
       default:
-        return <TenantsPage {...pageProps} />;
+        return <DashboardPage {...pageProps} />;
     }
   };
+  
 
   return (
     <div className="flex lg:flex-row h-screen font-sans relative">
+      {isLoggedIn && (
+        <Navbar
+          activeLink={activeLink}
+          setActiveLink={handleNavLinkClick}
+          isNavbarOpen={isNavbarOpen}
+          closeNavbar={() => setIsNavbarOpen(false)}
+          onLogout={handleLogout}
+        />
+      )}
 
-      <Navbar
-        activeLink={activeLink}
-        setActiveLink={handleNavLinkClick}
-        isNavbarOpen={isNavbarOpen}
-        closeNavbar={() => setIsNavbarOpen(false)}
-      />
-
-      {isNavbarOpen && (
+      {isLoggedIn && isNavbarOpen && (
         <div
           className="fixed inset-0 bg-black bg-opacity-50 z-40 lg:hidden"
           onClick={() => setIsNavbarOpen(false)}
         ></div>
       )}
-      
+
       <main className="flex-grow w-full bg-white overflow-auto rounded-l-lg shadow-inner">
         {renderContent()}
       </main>

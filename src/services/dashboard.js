@@ -1,8 +1,7 @@
 import fetchData  from '../../backend/index'
 
 export const getBasicSaasInformation = async () => {
-  const token = localStorage.getItem('authToken');
-  return fetchData.get('/api/PartnerAdmin/partner/GetBasicSaasInformation', );
+  return fetchData.get('/api/PartnerAdmin/partner/GetBasicSaasInformation');
 };
 
 export const getActiveAccounts = async () => {

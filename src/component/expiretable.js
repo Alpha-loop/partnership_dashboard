@@ -1,30 +1,25 @@
 import React, { useState, useEffect } from 'react';
-import { getExpiredAccounts, getExpiringAccounts } from '../services/dashboard'; // Make sure paths are correct
-import { Menu } from 'lucide-react'; // Assuming you still need this for the button
+import { getExpiredAccounts, getExpiringAccounts } from '../services/dashboard';
 
 const Expirecontent = () => {
   const [expiredAcct, setExpiredAcct] = useState([]);
   const [expiringAcct, setExpiringAcct] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState(null);
-  // State to control which table is displayed (e.g., 'expiring' or 'expired')
-  const [activeTab, setActiveTab] = useState('expiring'); // Default to 'expiring'
+  const [activeTab, setActiveTab] = useState('expiring');
 
   useEffect(() => {
-    const fetchData = async () => { // Renamed tData to fetchData for clarity
+    const fetchData = async () => { 
       try {
-        setLoading(true); // Start loading
-        setError(null);   // Clear any previous errors
+        setLoading(true); 
+        setError(null);
 
         const expiredRes = await getExpiredAccounts();
         console.log('Expired Accounts Raw Response:', expiredRes);
-        // Assuming the array is directly in res.data
         if (Array.isArray(expiredRes.data)) {
           setExpiredAcct(expiredRes.data);
         } else {
           console.warn('Expired Accounts data is not an array:', expiredRes.data);
-          // Handle case where backend might return an object with a nested array
-          // e.g., if it's { data: [...] }
           if (expiredRes.data && Array.isArray(expiredRes.data.data)) {
             setExpiredAcct(expiredRes.data.data);
           } else {
@@ -35,7 +30,6 @@ const Expirecontent = () => {
 
         const expiringRes = await getExpiringAccounts();
         console.log('Expiring Accounts Raw Response:', expiringRes);
-        // Assuming the array is directly in response.data
         if (Array.isArray(expiringRes.data)) {
           setExpiringAcct(expiringRes.data);
         } else {
@@ -49,30 +43,29 @@ const Expirecontent = () => {
 
       } catch (err) {
         console.error('Error fetching dashboard data:', err);
-        setError(err.message || 'Failed to fetch account data.'); // Store error message
+        setError(err.message || 'Failed to fetch account data.');
       } finally {
-        setLoading(false); // End loading
+        setLoading(false);
       }
     };
 
     fetchData();
-  }, []); // Empty dependency array means this effect runs once on mount
+  }, []);
 
-  // Log the state variables to verify they hold the fetched data
+  
   console.log('Expired Accounts State:', expiredAcct);
   console.log('Expiring Accounts State:', expiringAcct);
 
-  // Determine which data to display based on the activeTab
   const currentTableData = activeTab === 'expiring' ? expiringAcct : expiredAcct;
 
-  // Function to calculate expiry status (re-used logic)
+  
   const getExpiryStatus = (expiryDateString) => {
     if (!expiryDateString) return 'N/A';
-    // Handle date format: "DD/MM/YYYY" -> "YYYY-MM-DD" for Date constructor
+    
     const [day, month, year] = expiryDateString.split('/');
     const expiryDate = new Date(`${year}-${month}-${day}`);
     const today = new Date();
-    // Reset time to start of day for accurate day difference
+    
     expiryDate.setHours(0, 0, 0, 0);
     today.setHours(0, 0, 0, 0);
 
