@@ -19,10 +19,10 @@ const SubscriptionPage = ({ openNavbar }) => {
     setLoading(true);
     setError(null);
     try {
-      const data = await getRecentSubscriptions();
+      const subData = await getRecentSubscriptions();
       // Assuming data is an array of subscription objects
-      setSubscriptions(data);
-      console.log('Recent Subscriptions Data:', data);
+      setSubscriptions(subData.data);
+      console.log('Recent Subscriptions Data:', subData);
     } catch (err) {
       console.error("Failed to fetch subscription data:", err);
       setError(err.message || 'Failed to load subscription data.');
@@ -37,34 +37,31 @@ const SubscriptionPage = ({ openNavbar }) => {
   }, []); // Empty dependency array means this runs once on mount
 
   // Client-side filtering for the table based on search term
-  // const filteredSubscriptions = subscriptions.filter(subscription => {
-  //   const name = subscription.name || '';
-  //   const email = subscription.email || '';
-  //   const phone = subscription.phone || '';
-  //   const plan = subscription.plan || '';
-  //   const country = subscription.country || '';
-  //   const subscriptionDate = subscription.subscriptionDate || '';
-  //   const amount = subscription.amount ? String(subscription.amount) : ''; // Convert to string for search
+  const filteredSubscriptions = subscriptions.filter(subscription => {
+    const name = subscription.name || '';
+    const email = subscription.email || '';
+    const phone = subscription.phone || '';
+    const plan = subscription.plan || '';
+    const country = subscription.country || '';
+    const subscriptionDate = subscription.subscriptionDate || '';
+    const amount = subscription.amount ? String(subscription.amount) : ''; // Convert to string for search
 
-  //   const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-  //   return (
-  //     name.toLowerCase().includes(lowerCaseSearchTerm) ||
-  //     email.toLowerCase().includes(lowerCaseSearchTerm) ||
-  //     phone.toLowerCase().includes(lowerCaseSearchTerm) ||
-  //     plan.toLowerCase().includes(lowerCaseSearchTerm) ||
-  //     country.toLowerCase().includes(lowerCaseSearchTerm) ||
-  //     subscriptionDate.toLowerCase().includes(lowerCaseSearchTerm) ||
-  //     amount.includes(lowerCaseSearchTerm)
-  //   );
-  // });
+    return (
+      name.toLowerCase().includes(lowerCaseSearchTerm) ||
+      email.toLowerCase().includes(lowerCaseSearchTerm) ||
+      phone.toLowerCase().includes(lowerCaseSearchTerm) ||
+      plan.toLowerCase().includes(lowerCaseSearchTerm) ||
+      country.toLowerCase().includes(lowerCaseSearchTerm) ||
+      subscriptionDate.toLowerCase().includes(lowerCaseSearchTerm) ||
+      amount.includes(lowerCaseSearchTerm)
+    );
+  });
 
-  // Helper function to format date if needed (assuming subscriptionDate is a string like "MM/DD/YYYY")
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
-    // You might want to parse and reformat date strings here if they come in a different format
-    // For example, if from API as ISO string: new Date(dateString).toLocaleDateString()
-    return dateString;
+    return new Date(dateString).toLocaleDateString();
   };
 
   // Helper function to format amount with commas
@@ -73,6 +70,7 @@ const SubscriptionPage = ({ openNavbar }) => {
     return Number(amount).toLocaleString();
   };
 
+  console.log('This is filteredData',filteredSubscriptions)
   return (
     <div className="p-8 font-sans">
       <button
@@ -106,7 +104,7 @@ const SubscriptionPage = ({ openNavbar }) => {
                   Name
                 </th>
                 <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">
-                  Amount
+                  phone
                 </th>
                 <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">
                   Plan
@@ -115,13 +113,16 @@ const SubscriptionPage = ({ openNavbar }) => {
                   Country
                 </th>
                 <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">
-                  Subscription Date
+                  Subscription<br/> Date
+                </th>
+                <th className="px-5 py-3 text-left text-sm font-bold text-gray-600 uppercase tracking-wider">
+                  Expiry<br/> Date
                 </th>
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {subscriptions.length > 0 ? (
-                subscriptions.map((subscription, index) => (
+              {filteredSubscriptions.length > 0 ? (
+                filteredSubscriptions.map((subscription, index) => (
                   // Use a unique identifier from your backend if available (e.g., subscription.id)
                   // Falling back to index if no unique ID is guaranteed, but ID is preferred.
                   <tr key={subscription.id || index} className="hover:bg-gray-100">
@@ -130,20 +131,23 @@ const SubscriptionPage = ({ openNavbar }) => {
                         {subscription.name || 'N/A'}
                       </div>
                       <div className="text-sm text-gray-500">
-                        {subscription.phone || 'N/A'}
+                        {subscription.email || 'N/A'}
                       </div>
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
-                      {subscription.subscriptionPlan || 'N/A'}
+                      {subscription.phone || 'N/A'}
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700 uppercase">
-                      {subscription.country || 'N/A'}
+                      {subscription.subscriptionPlan || 'N/A'}
+                    </td>
+                    <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
+                      {subscription.country}
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
                       {formatDate(subscription.subscriptionDate)}
                     </td>
                     <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
-                      {subscription.expiryDate}
+                      {formatDate(subscription.expiryDate)}
                     </td>
                   </tr>
                 ))

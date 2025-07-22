@@ -26,6 +26,7 @@ const TenantsPage = ({ openNavbar }) => {
       const allTenantsData = await getAllTenants();
       // Assuming allTenantsData is an array of tenant objects
       setAllTenants(allTenantsData.data);
+      console.log('this is all tenantInfo: ', allTenantsData)
 
       // Fetch basic SaaS information for total tenants count
       const basicSaasInfo = await getBasicSaasInformation();
@@ -44,6 +45,11 @@ const TenantsPage = ({ openNavbar }) => {
   useEffect(() => {
     fetchTenantsData();
   }, []);
+
+  const formatDate = (dateString) => {
+    if (!dateString) return 'N/A';
+    return new Date(dateString).toLocaleDateString();
+  };
 
   
   const filteredTenants = allTenants.filter(tenant => {
@@ -163,30 +169,30 @@ const TenantsPage = ({ openNavbar }) => {
                 {filteredTenants.length > 0 ? (
                   filteredTenants.map((tenant, index) => (
                     
-                    <tr key={allTenants.id || index}>
+                    <tr key={index}>
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="text-sm font-medium text-gray-900">
-                          {allTenants.name || 'N/A'}
+                          {tenant.name || 'N/A'}
                         </div>
-                        <div className="text-sm text-gray-500">{allTenants.email || 'N/A'}</div>
-                        <div className="text-sm text-gray-500">{allTenants.phone || 'N/A'}</div>
+                        <div className="text-sm text-gray-500">{tenant.email || 'N/A'}</div>
+                        <div className="text-sm text-gray-500">{tenant.phone || 'N/A'}</div>
                       </td>
                       <td className="py-4 whitespace-nowrap">
                         <span className="px-2 inline-flex text-xs leading-5 font-semibold rounded-full text-gray-500">
-                          {allTenants.subscriptionPlan || 'N/A'}
+                          {tenant.subscriptionPlan || 'N/A'}
                         </span>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {allTenants.country || 'N/A'}
+                        {tenant.country || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {allTenants.membershipSize || 'N/A'}
+                        {tenant.membershipSize || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {allTenants.smsUnits || 'N/A'}
+                        {tenant.smsUnits || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-sm text-gray-500">
-                        {allTenants.expiryDate || 'N/A'}
+                        {formatDate(tenant.expiryDate) || 'N/A'}
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap text-right text-md font-bold text-gray-500 tracking-wider">
                         <p>...</p> {/* Keep the existing "..." for action */}

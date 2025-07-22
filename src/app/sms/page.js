@@ -20,22 +20,8 @@ const SMSPage = ({ openNavbar }) => {
     setLoading(true);
     setError(null);
     try {
-      let data;
-      if (currentView === 'purchases') {
-        // Fetch data for SMS Purchases
-        data = await getRecentSMS();
-        // Assuming getRecentSMS returns an array of objects like:
-        // [{ name: "...", amount: "...", smsUnit: "...", smsBalance: "...", purchaseDate: "..." }]
-        setSmsRecords(data);
-      } else if (currentView === 'sentMessages') {
-        // If 'sentMessages' needs different data, you would call a different API here.
-        // For now, we'll just use the same recentSMS data as a placeholder,
-        // or you might filter it differently if the backend returns combined data.
-        data = await getRecentSMS(); // Placeholder: using same endpoint
-        // You might filter or transform 'data' here if 'recentSMS' contains both purchase and sent info
-        setSmsRecords(data);
-      }
-      console.log(`SMS data for ${currentView}:`, data);
+      const smsData = await getRecentSMS()
+      setSmsRecords(smsData.data)
 
     } catch (err) {
       console.error(`Failed to fetch SMS data for ${currentView}:`, err);
@@ -52,30 +38,30 @@ const SMSPage = ({ openNavbar }) => {
   
 
   // Client-side filtering for the table based on search term
-  // const filteredSmsRecords = smsRecords.filter(record => {
-  //   const name = record.name || '';
-  //   const amount = record.amount ? String(record.amount) : '';
-  //   const smsUnit = record.smsUnit ? String(record.smsUnit) : '';
-  //   const smsBalance = record.smsBalance ? String(record.smsBalance) : '';
-  //   const purchaseDate = record.purchaseDate || '';
+  const filteredSmsRecords = smsRecords.filter(record => {
+    const name = record.name || '';
+    const amount = record.amount ? String(record.amount) : '';
+    const smsUnit = record.smsUnit ? String(record.smsUnit) : '';
+    const smsBalance = record.smsBalance ? String(record.smsBalance) : '';
+    const purchaseDate = record.purchaseDate || '';
 
-  //   const lowerCaseSearchTerm = searchTerm.toLowerCase();
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
 
-  //   return (
-  //     name.toLowerCase().includes(lowerCaseSearchTerm) ||
-  //     amount.includes(lowerCaseSearchTerm) ||
-  //     smsUnit.includes(lowerCaseSearchTerm) ||
-  //     smsBalance.includes(lowerCaseSearchTerm) ||
-  //     purchaseDate.toLowerCase().includes(lowerCaseSearchTerm)
-  //   );
-  // });
+    return (
+      name.toLowerCase().includes(lowerCaseSearchTerm) ||
+      amount.includes(lowerCaseSearchTerm) ||
+      smsUnit.includes(lowerCaseSearchTerm) ||
+      smsBalance.includes(lowerCaseSearchTerm) ||
+      purchaseDate.toLowerCase().includes(lowerCaseSearchTerm)
+    );
+  });
 
   // Helper function to format date if needed (assuming purchaseDate is a string like "MM/DD/YYYY")
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
     // You might want to parse and reformat date strings here if they come in a different format
-    // For example, if from API as ISO string: new Date(dateString).toLocaleDateString()
-    return dateString;
+    // For example, if from API as ISO string: 
+    return new Date(dateString).toLocaleDateString();
   };
 
   return (
@@ -141,11 +127,11 @@ const SMSPage = ({ openNavbar }) => {
               </tr>
             </thead>
             <tbody className="bg-white divide-y divide-gray-200">
-              {smsRecords.length > 0 ? (
-                smsRecords.map((sms, index) => (
+              {filteredSmsRecords.length > 0 ? (
+                filteredSmsRecords.map((sms, index) => (
                   // Use a unique identifier from your backend if available (e.g., sms.id)
                   // Falling back to index if no unique ID is guaranteed, but ID is preferred.
-                  <tr key={sms.id || index} className="hover:bg-gray-100">
+                  <tr key={index} className="hover:bg-gray-100">
                     <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
                       {sms.name || 'N/A'}
                     </td>
