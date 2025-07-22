@@ -14,7 +14,7 @@ import {
 import { useState, useEffect } from 'react'
 
 // --- Reusable Area Chart Component ---
-const AreaChartCard = ({ title, data, dataKey, xAxisKey, strokeColor, fillColor }) => {
+const AreaChartCard = ({ title, data, dataKey, xAxisKey, strokeColor, fillColor, legendText }) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
       <h3 className="text-xl font-semibold text-gray-800 mb-4">{title}</h3>
@@ -54,7 +54,7 @@ const AreaChartCard = ({ title, data, dataKey, xAxisKey, strokeColor, fillColor 
             <Legend
               wrapperStyle={{ paddingTop: '20px', fontSize: '14px' }}
               iconType="circle"
-              formatter={(value) => <span className="text-gray-600">{value}</span>}
+              formatter={() => <span className="text-gray-600">{legendText}</span>}
             />
           </AreaChart>
         </ResponsiveContainer>
@@ -64,7 +64,7 @@ const AreaChartCard = ({ title, data, dataKey, xAxisKey, strokeColor, fillColor 
 };
 
 // --- Reusable Bar Chart Component ---
-const BarChartCard = ({ title, data, dataKey, xAxisKey, barColor }) => {
+const BarChartCard = ({ title, data, dataKey, xAxisKey, barColor, legendText}) => {
   return (
     <div className="bg-white p-6 rounded-lg shadow-md border border-gray-200">
       <h3 className="text-xl font-semibold text-gray-800 mb-4">{title}</h3>
@@ -102,7 +102,7 @@ const BarChartCard = ({ title, data, dataKey, xAxisKey, barColor }) => {
             <Legend
               wrapperStyle={{ paddingTop: '20px', fontSize: '14px' }}
               iconType="circle"
-              formatter={(value) => <span className="text-gray-600">{value}</span>}
+              formatter={() => <span className="text-gray-600">{legendText}</span>}
             />
           </BarChart>
         </ResponsiveContainer>
@@ -123,22 +123,28 @@ const DashboardGraph = () => {
     const fetchData = async () => {
       try {
         const smsUsageData = await getSMSUsageTrend();
-        setSmsUsage(smsUsageData);
+        setSmsUsage(smsUsageData.data);
+        console.log('this is sms usage: ', smsUsageData)
 
         const smsPurchaseData = await getSMSPurchaseTrend();
-        setSmsPurchase(smsPurchaseData);
+        setSmsPurchase(smsPurchaseData.data);
+        console.log('this is sms purchase: ', smsPurchaseData)
 
         const subscriptionData = await getSubscriptionTrend();
-        setSubscription(subscriptionData);
+        setSubscription(subscriptionData.data);
+        console.log('this is subscription: ', subscriptionData)
 
         const subscriptionsRevenueData = await getSubscriptionRevenueTrend();
-        setSubscriptionsRevenue(subscriptionsRevenueData)
+        setSubscriptionsRevenue(subscriptionsRevenueData.data)
+        console.log('this is subscription revenue: ', subscriptionsRevenueData)
 
       } catch(err) {
-        console.error('Error fetching dashboard data:', err);
+        console.error('Error fetching dashboard data: ', err);
         setError(err);
       }
     }
+
+    fetchData()
   }, [])
 
 
@@ -155,38 +161,42 @@ const DashboardGraph = () => {
         <AreaChartCard
           title="Subscription Trend"
           data={subscription}
-          dataKey="Subscription Trend"
-          xAxisKey="name"
+          dataKey="value"
+          xAxisKey="yearMonth"
           strokeColor="#6366f1" // Indigo-500
           fillColor="url(#colorSubscription)"
+          legendText="Subscription Trend"
         />
 
         {/* SMS Purchase Trend Chart */}
         <BarChartCard
           title="SMS Purchase Trend"
           data={smsPurchase}
-          dataKey="SMS Purchase Trend"
-          xAxisKey="name"
+          dataKey="value"
+          xAxisKey="yearMonth"
           barColor="#4f46e5" // Indigo-600
+          legendText="SMS Purchase Trend"
         />
 
         {/* Subscription Revenue Chart */}
         <AreaChartCard
           title="Subscription Revenue"
           data={subscriptionsRevenue}
-          dataKey="Revenue Trend"
-          xAxisKey="name"
+          dataKey="value"
+          xAxisKey="yearMonth"
           strokeColor="#6366f1" // Cyan-500
           fillColor="url(#colorRevenue)"
+          legendText="Subscription Revenue"
         />
 
         {/* SMS Usage Chart */}
         <BarChartCard
           title="SMS Usage"
           data={smsUsage}
-          dataKey="SMS Usage Trend"
-          xAxisKey="name"
+          dataKey="value"
+          xAxisKey="yearMonth"
           barColor="#6366f1" // Emerald-500
+          legendText="SMS Usage"
         />
       </div>
 

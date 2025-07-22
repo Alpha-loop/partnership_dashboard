@@ -8,12 +8,6 @@ import { Menu } from 'lucide-react';
 import {
   getBasicSaasInformation,
 } from '../../services/dashboard';
-import {
-  getSMSUsageTrend,
-  getSMSPurchaseTrend,
-  getSubscriptionRevenueTrend,
-  getSubscriptionTrend
-} from '../../services/trends'
 
 const DashboardPage = ({ openNavbar }) => {
   // State for basic SaaS information
