@@ -2,21 +2,26 @@ import fetchData  from '../../backend/index'
 
 
 export const getSignUpTrend = async () => {
-  return fetchData('/api/partneradmin/partner/GetSignUpTrend');
+  const data = fetchData.get('/api/partneradmin/partner/GetSignUpTrend');
+  return data;
 };
 
 export const getSMSPurchaseTrend = async () => {
-  return fetchData('/api/partneradmin/partner/GetSMSPurchaseTrend');
+  const data = fetchData.get('/api/partneradmin/partner/GetSMSPurchaseTrend');
+  return data;
 };
 
 export const getSMSUsageTrend = async () => {
-  return fetchData('/api/partneradmin/partner/GetSMSUsageTrend');
+  const data = fetchData.get('/api/partneradmin/partner/GetSMSUsageTrend');
+  return data;
 };
 
 export const getSubscriptionRevenueTrend = async () => {
-  return fetchData('/api/partneradmin/partner/GetSubscriptionRevenueTrend');
+  const data = fetchData.get('/api/partneradmin/partner/GetSubscriptionRevenueTrend');
+  return data;
 };
 
 export const getSubscriptionTrend = async () => {
-  return fetchData('/api/partneradmin/partner/GetSubscriptionTrend');
+  const data = fetchData.get('/api/partneradmin/partner/GetSubscriptionTrend');
+  return data;
 };

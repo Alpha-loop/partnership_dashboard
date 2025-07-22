@@ -7,19 +7,17 @@ import DashboardGraph from "@/component/graph";
 import { Menu } from 'lucide-react';
 import {
   getBasicSaasInformation,
-  getActiveAccounts,
-  getInactiveAccounts,
-  getPlanSummary
-  
 } from '../../services/dashboard';
+import {
+  getSMSUsageTrend,
+  getSMSPurchaseTrend,
+  getSubscriptionRevenueTrend,
+  getSubscriptionTrend
+} from '../../services/trends'
 
 const DashboardPage = ({ openNavbar }) => {
   // State for basic SaaS information
   const [saasInfo, setSaasInfo] = useState(null);
-  // State for active accounts count
-  const [activeAccountsCount, setActiveAccountsCount] = useState(null);
-  // State for inactive accounts count
-  const [inactiveAccountsCount, setInactiveAccountsCount] = useState(null);
   // State for loading status
   const [loading, setLoading] = useState(true);
   // State for error handling
@@ -34,16 +32,6 @@ const DashboardPage = ({ openNavbar }) => {
         const saasInfoData = await getBasicSaasInformation();
         setSaasInfo(saasInfoData);
         console.log('Basic SaaS Info:', saasInfoData);
-
-        // --- Fetch Active Accounts Count ---
-        const activeAccountsData = await getActiveAccounts();
-        setActiveAccountsCount(activeAccountsData);
-        console.log('Active Accounts Count:', activeAccountsData);
-
-        // --- Fetch In-Active Accounts Count ---
-        const inactiveAccountsData = await getInactiveAccounts();
-        setInactiveAccountsCount(inactiveAccountsData);
-        console.log('Inactive Accounts Count:', inactiveAccountsData);
 
       } catch (err) {
         console.error('Error fetching dashboard data:', err);

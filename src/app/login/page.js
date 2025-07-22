@@ -51,7 +51,7 @@ const LoginPage = ({ onLoginSuccess }) => {
   const [error, setError] = useState(null);
   const [successMessage, setSuccessMessage] = useState(null);
 
-  const router = useRouter()
+  
 
   const handleSubmit = async (e) => {
     e.preventDefault();

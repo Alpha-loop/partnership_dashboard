@@ -5,6 +5,13 @@ import {
   AreaChart, Area, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer,
   BarChart, Bar, Legend
 } from 'recharts';
+import {
+  getSMSUsageTrend,
+  getSMSPurchaseTrend,
+  getSubscriptionRevenueTrend,
+  getSubscriptionTrend
+} from '../services/trends'
+import { useState, useEffect } from 'react'
 
 // --- Reusable Area Chart Component ---
 const AreaChartCard = ({ title, data, dataKey, xAxisKey, strokeColor, fillColor }) => {
@@ -107,36 +114,32 @@ const BarChartCard = ({ title, data, dataKey, xAxisKey, barColor }) => {
 
 // --- Main App Component to demonstrate usage ---
 const DashboardGraph = () => {
-  // Sample Data for Subscription Trend & Revenue
-  const subscriptionData = [
-    { name: '2025-01', 'Subscription Trend': 22, 'Revenue Trend': 15.0 },
-    { name: '2025-02', 'Subscription Trend': 20, 'Revenue Trend': 14.5 },
-    { name: '2025-03', 'Subscription Trend': 25, 'Revenue Trend': 17.0 },
-    { name: '2025-04', 'Subscription Trend': 30, 'Revenue Trend': 20.0 },
-    { name: '2025-05', 'Subscription Trend': 40, 'Revenue Trend': 25.0 },
-    { name: '2025-06', 'Subscription Trend': 50, 'Revenue Trend': 30.0 },
-    { name: '2025-07', 'Subscription Trend': 20, 'Revenue Trend': 15.0 },
-  ];
+  const [ smsUsage, setSmsUsage ] = useState([]);
+  const [ smsPurchase, setSmsPurchase ] = useState([]);
+  const [ subscription, setSubscription ] = useState([]);
+  const [ subscriptionsRevenue, setSubscriptionsRevenue ] = useState([]);
 
-  // Sample Data for SMS Purchase Trend & SMS Usage
-  const smsData = [
-    { name: '2025-01', 'SMS Purchase Trend': 750 },
-    { name: '2025-02', 'SMS Purchase Trend': 50 },
-    { name: '2025-03', 'SMS Purchase Trend': 300 },
-    { name: '2025-04', 'SMS Purchase Trend': 350 },
-    { name: '2025-05', 'SMS Purchase Trend': 100 },
-    { name: '2025-06', 'SMS Purchase Trend': 80 },
-    { name: '2025-07', 'SMS Purchase Trend': 250 },
-  ];
+  useEffect(() => {
+    const fetchData = async () => {
+      try {
+        const smsUsageData = await getSMSUsageTrend();
+        setSmsUsage(smsUsageData);
 
-  const smsUsageData = [
-    { name: '2025-02', 'SMS Usage Trend': 450 },
-    { name: '2025-03', 'SMS Usage Trend': 600 },
-    { name: '2025-04', 'SMS Usage Trend': 650 },
-    { name: '2025-05', 'SMS Usage Trend': 200 },
-    { name: '2025-06', 'SMS Usage Trend': 150 },
-    { name: '2025-07', 'SMS Usage Trend': 400 },
-  ];
+        const smsPurchaseData = await getSMSPurchaseTrend();
+        setSmsPurchase(smsPurchaseData);
+
+        const subscriptionData = await getSubscriptionTrend();
+        setSubscription(subscriptionData);
+
+        const subscriptionsRevenueData = await getSubscriptionRevenueTrend();
+        setSubscriptionsRevenue(subscriptionsRevenueData)
+
+      } catch(err) {
+        console.error('Error fetching dashboard data:', err);
+        setError(err);
+      }
+    }
+  }, [])
 
 
   return (
@@ -151,7 +154,7 @@ const DashboardGraph = () => {
         {/* Subscription Trend Chart */}
         <AreaChartCard
           title="Subscription Trend"
-          data={subscriptionData}
+          data={subscription}
           dataKey="Subscription Trend"
           xAxisKey="name"
           strokeColor="#6366f1" // Indigo-500
@@ -161,7 +164,7 @@ const DashboardGraph = () => {
         {/* SMS Purchase Trend Chart */}
         <BarChartCard
           title="SMS Purchase Trend"
-          data={smsData}
+          data={smsPurchase}
           dataKey="SMS Purchase Trend"
           xAxisKey="name"
           barColor="#4f46e5" // Indigo-600
@@ -170,7 +173,7 @@ const DashboardGraph = () => {
         {/* Subscription Revenue Chart */}
         <AreaChartCard
           title="Subscription Revenue"
-          data={subscriptionData}
+          data={subscriptionsRevenue}
           dataKey="Revenue Trend"
           xAxisKey="name"
           strokeColor="#6366f1" // Cyan-500
@@ -180,7 +183,7 @@ const DashboardGraph = () => {
         {/* SMS Usage Chart */}
         <BarChartCard
           title="SMS Usage"
-          data={smsUsageData}
+          data={smsUsage}
           dataKey="SMS Usage Trend"
           xAxisKey="name"
           barColor="#6366f1" // Emerald-500
