@@ -21,7 +21,7 @@ export const getExpiringAccounts = async () => {
 };
 
 export const getRecentCommunications = async () => {
-  return fetchData('/api/partneradmin/recent-communications');
+  return fetchData.get('/api/partneradmin/recent-communications');
 };
 
 export const getRecentSubscriptions = async () => {

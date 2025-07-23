@@ -6,6 +6,7 @@ import { Menu } from 'lucide-react';
 
 import {
   getRecentSMS,
+  getRecentCommunications
 } from '../../services/partner'; 
 
 const SMSPage = ({ openNavbar }) => {
@@ -15,6 +16,7 @@ const SMSPage = ({ openNavbar }) => {
   const [searchTerm, setSearchTerm] = useState('');
   // State to manage which tab is active: 'purchases' or 'sentMessages'
   const [currentView, setCurrentView] = useState('purchases');
+  const [communication, setCommunication] = useState([])
 
   const fetchSmsData = async () => {
     setLoading(true);
@@ -22,6 +24,10 @@ const SMSPage = ({ openNavbar }) => {
     try {
       const smsData = await getRecentSMS()
       setSmsRecords(smsData.data)
+
+      const communicationData = await getRecentCommunications();
+      setCommunication(communicationData.data)
+
 
     } catch (err) {
       console.error(`Failed to fetch SMS data for ${currentView}:`, err);
@@ -56,11 +62,26 @@ const SMSPage = ({ openNavbar }) => {
     );
   });
 
-  // Helper function to format date if needed (assuming purchaseDate is a string like "MM/DD/YYYY")
+  const filteredCommnication = communication.filter(record => {
+    const name = record.name || '';
+    const unitsUsed = record.units ? String(record.units) : '';
+    const currentUnits = record.currentUnits ? String(record.currentUnits) : '';
+    const date = record.date ? String(record.date) : '';
+    const success = record.success || '';
+
+    const lowerCaseSearchTerm = searchTerm.toLowerCase();
+
+    return (
+      name.toLowerCase().includes(lowerCaseSearchTerm) ||
+      unitsUsed.includes(lowerCaseSearchTerm) ||
+      currentUnits.includes(lowerCaseSearchTerm) ||
+      date.includes(lowerCaseSearchTerm) ||
+      success.toLowerCase().includes(lowerCaseSearchTerm)
+    );
+  });
+
   const formatDate = (dateString) => {
     if (!dateString) return 'N/A';
-    // You might want to parse and reformat date strings here if they come in a different format
-    // For example, if from API as ISO string: 
     return new Date(dateString).toLocaleDateString();
   };
 
@@ -106,56 +127,108 @@ const SMSPage = ({ openNavbar }) => {
 
       {!loading && !error && (
         <div className="overflow-x-auto bg-white rounded-lg shadow-lg">
-          <table className="min-w-full divide-y divide-gray-200">
-            <thead className="bg-gray-200">
-              <tr>
-                <th className="px-5 py-3 text-left text-sm font-bold uppercase tracking-wider">
-                  Name
-                </th>
-                <th className="px-5 py-3 text-left text-sm font-bold uppercase tracking-wider">
-                  Amount
-                </th>
-                <th className="px-5 py-3 text-left text-sm font-bold uppercase tracking-wider">
-                  SMS <br />Unit
-                </th>
-                <th className="px-5 py-3 text-left text-sm font-bold uppercase tracking-wider">
-                  SMS <br />Balance
-                </th>
-                <th className="px-5 py-3 text-left text-sm font-bold uppercase tracking-wider">
-                  <p className="font-extrabold">Purchase <br />Date</p>
-                </th>
-              </tr>
-            </thead>
-            <tbody className="bg-white divide-y divide-gray-200">
-              {filteredSmsRecords.length > 0 ? (
-                filteredSmsRecords.map((sms, index) => (
-                  // Use a unique identifier from your backend if available (e.g., sms.id)
-                  // Falling back to index if no unique ID is guaranteed, but ID is preferred.
-                  <tr key={index} className="hover:bg-gray-100">
-                    <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700">
-                      {sms.name || 'N/A'}
-                    </td>
-                    <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
-                      {sms.amount || 'N/A'}
-                    </td>
-                    <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
-                      {sms.smsUnit || 'N/A'}
-                    </td>
-                    <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
-                      {sms.smsBalance || 'N/A'}
-                    </td>
-                    <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
-                      {formatDate(sms.purchaseDate)}
-                    </td>
-                  </tr>
-                ))
+          {
+            currentView === 'sentMessages' ?
+              (
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-200">
+                    <tr>
+                      <th className="px-5 py-3  text-xs font-bold uppercase tracking-wider">
+                        NAME
+                      </th>
+                      <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider">
+                        UNITS USED
+                      </th>
+                      <th className="px-5 py-3  text-xs font-bold uppercase tracking-wider">
+                        CURRENT UNITS
+                      </th>
+                      <th className="px-5 py-3  text-xs font-bold uppercase tracking-wider">
+                        DATE
+                      </th>
+                      <th className="px-5 py-3  text-xs font-bold uppercase tracking-wider">
+                        <p className="font-extrabold">SUCCESS</p>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredCommnication.length > 0 ? (
+                      filteredCommnication.map((sms, index) => (
+                        <tr key={index} className="hover:bg-gray-100">
+                          <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700 text-center">
+                            {sms.tenant.name || '-'}
+                          </td>
+                          <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
+                            {sms.units || '-'}
+                          </td>
+                          <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
+                            {sms.currentUnits || '-'}
+                          </td>
+                          <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
+                            {formatDate(sms.date)}
+                          </td>
+                          <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
+                            {sms.success}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="5" className="px-5 py-4 text-center text-gray-500">No SMS records found.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
               ) : (
-                <tr>
-                  <td colSpan="5" className="px-5 py-4 text-center text-gray-500">No SMS records found.</td>
-                </tr>
-              )}
-            </tbody>
-          </table>
+                <table className="min-w-full divide-y divide-gray-200">
+                  <thead className="bg-gray-200">
+                    <tr>
+                      <th className="px-5 py-3  text-xs font-bold uppercase tracking-wider">
+                        Name
+                      </th>
+                      <th className="px-5 py-3 text-xs font-bold uppercase tracking-wider">
+                        Amount
+                      </th>
+                      <th className="px-5 py-3  text-xs font-bold uppercase tracking-wider">
+                        SMS Unit
+                      </th>
+                      <th className="px-5 py-3  text-xs font-bold uppercase tracking-wider">
+                        SMS Balance
+                      </th>
+                      <th className="px-5 py-3  text-xs font-bold uppercase tracking-wider">
+                        <p className="font-extrabold">Purchase Date</p>
+                      </th>
+                    </tr>
+                  </thead>
+                  <tbody className="bg-white divide-y divide-gray-200">
+                    {filteredSmsRecords.length > 0 ? (
+                      filteredSmsRecords.map((sms, index) => (
+                        <tr key={index} className="hover:bg-gray-100">
+                          <td className="px-5 py-4 whitespace-nowrap text-sm text-gray-700 text-center">
+                            {sms.name || '-'}
+                          </td>
+                          <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
+                            {sms.amount || '-'}
+                          </td>
+                          <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
+                            {sms.smsUnit || '-'}
+                          </td>
+                          <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
+                            {sms.smsBalance || '-'}
+                          </td>
+                          <td className="px-5 py-4 whitespace-nowrap text-sm text-center text-gray-700">
+                            {formatDate(sms.purchaseDate)}
+                          </td>
+                        </tr>
+                      ))
+                    ) : (
+                      <tr>
+                        <td colSpan="5" className="px-5 py-4 text-center text-gray-500">No SMS records found.</td>
+                      </tr>
+                    )}
+                  </tbody>
+                </table>
+              )
+          }
         </div>
       )}
     </div>

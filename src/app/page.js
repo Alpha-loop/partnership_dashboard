@@ -1,6 +1,6 @@
 'use client'
 
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import Navbar from '@/component/navbar'; 
 import DashboardPage from './dashboard/page';
 import TenantsPage from './tenants/page';
@@ -13,6 +13,17 @@ const App = () => {
   const [activeLink, setActiveLink] = useState('login'); // Default to login
   const [isNavbarOpen, setIsNavbarOpen] = useState(false);
   const [isLoggedIn, setIsLoggedIn] = useState(false);
+  const [isLoadingAuth, setIsLoadingAuth] = useState(true);
+
+
+   useEffect(() => {
+    const token = localStorage.getItem('authToken');
+    if (token) {
+      setIsLoggedIn(true);
+      setActiveLink('dashboard');
+    }
+    setIsLoadingAuth(false);
+  }, []);
 
 
   const handleNavLinkClick = (link) => {
@@ -26,16 +37,23 @@ const App = () => {
   };
 
   const handleLogout = () => {
-    setIsLoggedIn(false); // Reset login state
-    setActiveLink('login'); // Set active link to login
-    // Clear authentication data (replace with your actual logic)
-    document.cookie = 'auth_token=; expires=Thu, 01 Jan 1970 00:00:00 GMT; path=/'; // Example: Clear auth cookie
+    setIsLoggedIn(false);
+    setActiveLink('login');
+    localStorage.removeItem('authToken');
   };
 
   const openNavbar = () => setIsNavbarOpen(true);
 
   const renderContent = () => {
     const pageProps = { openNavbar };
+
+    if (isLoadingAuth) {
+      return (
+        <div className="flex items-center justify-center h-screen text-gray-700">
+          Loading authentication status...
+        </div>
+      );
+    }
 
     if (!isLoggedIn) {
       return <LoginPage onLoginSuccess={handleLoginSuccess} />;
