@@ -20,6 +20,8 @@ const Navbar = ({ activeLink, setActiveLink, isNavbarOpen, closeNavbar, onLogout
     router.push('/'); // Redirect to the root (which shows the login page)
   };
 
+  const userName = localStorage.getItem('userName');
+
   return (
     <div
       className={`
@@ -49,7 +51,7 @@ const Navbar = ({ activeLink, setActiveLink, isNavbarOpen, closeNavbar, onLogout
         <div className="w-12 h-12 rounded-full border-2 border-white"></div>
         <div>
           <p className="text-white text-sm font-semibold">Hello,</p>
-          <p className="text-blue-200 text-xs truncate">thesiepeter@churchplus.co</p>
+          <p className="text-blue-200 text-xs truncate">{userName}</p>
         </div>
       </div>
 

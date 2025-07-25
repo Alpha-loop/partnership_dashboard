@@ -27,6 +27,7 @@ const LoginPage = ({ onLoginSuccess }) => {
       setSuccessMessage('Login successful! Redirecting...');
       if (data) {
         localStorage.setItem('authToken', data.token);
+        localStorage.setItem('userName', data.username);
       } else {
         console.warn('Login response did not contain a token. Check backend response structure.');
       }

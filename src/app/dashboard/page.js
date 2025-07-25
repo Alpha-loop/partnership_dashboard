@@ -88,21 +88,10 @@ const DashboardPage = ({ openNavbar }) => {
           </p>
         </div>
 
-        {/* Subscription Revenue */}
-        <div className="bg-gray-200 p-6 shadow-md rounded-lg hover:scale-105 transition-transform duration-300">
-          <div className="flex items-center justify-between">
-            <h3 className="text-1xl font-semibold text-gray-700 mb-2">
-              Subscription Revenue
-            </h3>
-            <p className="text-green-500 font-semibold">%</p>
-          </div>
-          <p className="text-2xl font-medium text-gray-950 text-right mt-12">
-            {formatNumber(saasInfo.data.subscriptionsRevenue)}
-          </p>
-        </div>
+        
 
         {/* SMS Revenue */}
-        <div className="bg-gray-200 p-6 shadow-md rounded-lg hover:scale-105 transition-transform duration-300">
+        {/* <div className="bg-gray-200 p-6 shadow-md rounded-lg hover:scale-105 transition-transform duration-300">
           <div className="flex items-center justify-between">
             <h3 className="text-1xl font-semibold text-gray-700 mb-2">
               SMS Revenue
@@ -112,10 +101,10 @@ const DashboardPage = ({ openNavbar }) => {
           <p className="text-2xl font-medium text-gray-950 text-right mt-12">
             {formatNumber(saasInfo.data.communicationRevenue)}
           </p>
-        </div>
+        </div> */}
 
         {/* Current Month Revenue & Average Monthly Revenue */}
-        <div className="bg-gray-200 p-6 shadow-md rounded-lg hover:scale-105 transition-transform duration-300">
+        {/*<div className="bg-gray-200 p-6 shadow-md rounded-lg hover:scale-105 transition-transform duration-300">
           <div className="flex items-center justify-between">
             <div className="mb-3">
               <h3 className="text-sm font-semibold text-gray-700">
@@ -137,10 +126,10 @@ const DashboardPage = ({ openNavbar }) => {
           <p className="text-2xl font-medium text-gray-950 text-right mt-3 mb-3">
             {formatNumber(saasInfo.data.mrr + saasInfo.data.communicationRevenue)}
           </p>
-        </div>
+        </div>*/}
 
         {/* Revenue per user */}
-        <div className="bg-gray-200 p-6 shadow-md rounded-lg hover:scale-105 transition-transform duration-300">
+        {/* <div className="bg-gray-200 p-6 shadow-md rounded-lg hover:scale-105 transition-transform duration-300">
           <div className="flex items-center justify-between">
             <h3 className="text-1xl font-semibold text-gray-700 mb-2">
               Revenue per user
@@ -150,24 +139,7 @@ const DashboardPage = ({ openNavbar }) => {
           <p className="text-2xl font-medium text-gray-950 text-right mt-12 mb-5">
             {formatNumber(saasInfo.data.arpu)}
           </p>
-        </div>
-
-        {/* SMS Units Used & Purchased */}
-        <div className="bg-gray-200 p-6 shadow-md rounded-lg hover:scale-105 transition-transform duration-300">
-          <div className="flex items-center justify-between">
-            <h3 className="text-sm font-semibold text-gray-700 mb-2">
-              SMS Units Used
-            </h3>
-            <p className="text-green-500 font-semibold">%</p>
-          </div>
-          <p className="text-2xl font-medium text-gray-950">{formatNumber(saasInfo.data.communicationUnitsUsed)}</p>
-          <p className="mt-7 text-sm font-semibold text-gray-700">
-            SMS Units Purchased
-          </p>
-          <p className="text-2xl font-medium text-gray-950 text-right mt-3 mb-3">
-            {formatNumber(saasInfo?.data.communicationUnitsPurchased)}
-          </p>
-        </div>
+        </div> */}
 
         {/* Sign Ups & Subscriptions */}
         <div className="bg-gray-200 p-6 shadow-md rounded-lg hover:scale-105 transition-transform duration-300">
@@ -207,6 +179,36 @@ const DashboardPage = ({ openNavbar }) => {
           </p>
           <p className="text-2xl font-medium text-gray-950 text-right mt-1">
             {formatNumber(saasInfo.data.tenantsNonActive)}
+          </p>
+        </div>
+
+        {/* SMS Units Used & Purchased */}
+        <div className="bg-gray-200 p-6 shadow-md rounded-lg hover:scale-105 transition-transform duration-300">
+          <div className="flex items-center justify-between">
+            <h3 className="text-sm font-semibold text-gray-700 mb-2">
+              SMS Units Used
+            </h3>
+            <p className="text-green-500 font-semibold">%</p>
+          </div>
+          <p className="text-2xl font-medium text-gray-950">{formatNumber(saasInfo.data.communicationUnitsUsed)}</p>
+          <p className="mt-7 text-sm font-semibold text-gray-700">
+            SMS Units Purchased
+          </p>
+          <p className="text-2xl font-medium text-gray-950 text-right mt-3 mb-3">
+            {formatNumber(saasInfo?.data.communicationUnitsPurchased)}
+          </p>
+        </div>
+
+        {/* Subscription Revenue */}
+        <div className="bg-gray-200 p-6 shadow-md rounded-lg hover:scale-105 transition-transform duration-300">
+          <div className="flex items-center justify-between">
+            <h3 className="text-1xl font-semibold text-gray-700 mb-2">
+              Subscription Revenue
+            </h3>
+            <p className="text-green-500 font-semibold">%</p>
+          </div>
+          <p className="text-2xl font-medium text-gray-950 text-right mt-12">
+            {formatNumber(saasInfo.data.subscriptionsRevenue)}
           </p>
         </div>
       </div>
